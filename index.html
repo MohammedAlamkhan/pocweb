@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laptop Revolution</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            background-color: #111111;
+            color: #ffffff;
+            font-family: 'Roboto Mono', monospace;
+        }
+        #webgl-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            outline: none;
+        }
+        #scroll-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 400vh; /* Controls scroll length */
+            z-index: 2;
+        }
+        #content {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            pointer-events: none;
+        }
+        .section {
+            position: absolute;
+            opacity: 0;
+            transition: opacity 0.5s linear;
+            max-width: 80%;
+        }
+        .section.visible {
+            opacity: 1;
+        }
+        h1 {
+            font-size: clamp(2rem, 8vw, 6rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin: 0;
+        }
+        p {
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            max-width: 600px;
+            margin: 1em auto 0;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="webgl-canvas"></canvas>
+    <div id="scroll-container"></div>
+    <div id="content">
+        <div class="section" id="section0">
+            <h1>THE LAPTOP REVOLUTION</h1>
+        </div>
+        <div class="section" id="section1">
+            <h1>A NEW BREED</h1>
+            <p>This is not just another laptop. It's the culmination of cutting-edge technology and design.</p>
+        </div>
+        <div class="section" id="section2">
+            <h1>POWER & PERFORMANCE</h1>
+            <p>Engineered for the most demanding tasks, from 3D rendering to complex data analysis.</p>
+        </div>
+        <div class="section" id="section3">
+            <h1>DESIGNED FOR TOMORROW</h1>
+            <p>A glimpse into the future of computing.</p>
+        </div>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+                "three/addons/utils/BufferGeometryUtils.js": "https://unpkg.com/three@0.160.0/examples/jsm/utils/BufferGeometryUtils.js"
+            }
+        }
+    </script>
+    <script type="module" src="main.js"></script>
+</body>
+</html>

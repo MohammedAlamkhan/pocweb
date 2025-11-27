@@ -14,7 +14,7 @@
             background-color: #111111;
             color: #ffffff;
             font-family: 'Roboto Mono', monospace;
-            cursor: none;
+            cursor: auto;
         }
         #webgl-canvas {
             position: fixed;
@@ -147,7 +147,6 @@
                 this.active = false;
                 this.initialized = false;
                 
-                // Ensure DOM is ready
                 if (document.readyState === 'loading') {
                     document.addEventListener('DOMContentLoaded', () => this.init());
                 } else {
@@ -162,7 +161,6 @@
                 this.initialized = true;
                 this.animate();
                 
-                // Set first section active by default
                 if (this.canvas.id === 'canvas0') {
                     this.setActive(true);
                 }
@@ -174,7 +172,6 @@
             }
             
             generateTextPositions() {
-                // Wait for fonts to load
                 if (document.fonts && !document.fonts.check('700 1rem Roboto Mono')) {
                     document.fonts.ready.then(() => this.generateTextPositions());
                     return;
@@ -185,7 +182,6 @@
                 tempCanvas.width = this.canvas.width;
                 tempCanvas.height = this.canvas.height;
                 
-                // Use actual rendered font size
                 const h1Element = document.querySelector('h1');
                 const computedStyle = getComputedStyle(h1Element);
                 const fontSize = computedStyle.fontSize;
@@ -196,24 +192,22 @@
                 tempCtx.textBaseline = 'middle';
                 tempCtx.fillStyle = '#ffffff';
                 
-                // Draw text at exact center
                 const centerX = tempCanvas.width / 2;
                 const centerY = tempCanvas.height / 2;
                 tempCtx.fillText(this.text, centerX, centerY);
                 
-                // Get pixel data
                 const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
                 const data = imageData.data;
                 
                 this.textPositions = [];
-                const step = 4; // Sample every 4th pixel for performance
+                const step = 4;
                 
                 for (let y = 0; y < tempCanvas.height; y += step) {
                     for (let x = 0; x < tempCanvas.width; x += step) {
                         const index = (y * tempCanvas.width + x) * 4;
                         const alpha = data[index + 3];
                         
-                        if (alpha > 128) { // Solid pixel
+                        if (alpha > 128) {
                             this.textPositions.push({ x, y });
                         }
                     }
@@ -221,7 +215,6 @@
                 
                 console.log(`"${this.text}": ${this.textPositions.length} particles`);
                 
-                // If no text positions found, try again with larger step
                 if (this.textPositions.length === 0) {
                     console.warn(`No text positions found for "${this.text}", retrying...`);
                     setTimeout(() => this.generateTextPositions(), 100);
@@ -240,7 +233,6 @@
                 
                 this.active = active;
                 if (active) {
-                    // Reset all particles to animate in
                     this.particles.forEach(p => p.reset());
                 }
             }
@@ -261,7 +253,6 @@
                 if (this.active && this.particles.length > 0) {
                     this.ctx.fillStyle = '#ffffff';
                     
-                    // Draw all particles at once for better performance
                     this.ctx.beginPath();
                     for (let i = 0; i < this.particles.length; i++) {
                         this.particles[i].update();
@@ -286,40 +277,51 @@
             }
             
             reset() {
-                // Start from random position off-screen
                 const angle = Math.random() * Math.PI * 2;
                 const distance = Math.max(this.system.canvas.width, this.system.canvas.height) * 0.6;
                 
                 this.x = this.system.canvas.width / 2 + Math.cos(angle) * distance;
                 this.y = this.system.canvas.height / 2 + Math.sin(angle) * distance;
                 
-                // Random velocity
                 this.vx = (Math.random() - 0.5) * 15;
                 this.vy = (Math.random() - 0.5) * 15;
-                
                 this.friction = 0.96;
-                this.attractionForce = 0.02; // Strength of pull toward text
+                this.attractionForce = 0.02;
+                // Add subtle wander force to keep particles alive
+                this.wanderForce = 0.001;
             }
             
             update() {
-                // Calculate distance to destination
+                // Calculate distances
                 const dx = this.destX - this.x;
                 const dy = this.destY - this.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
                 
-                // Attraction to destination
-                this.vx += dx * this.attractionForce;
-                this.vy += dy * this.attractionForce;
-                
-                // Mouse repulsion (only if close)
+                // Mouse repulsion - apply FIRST and make it stronger
                 const mouseDx = this.x - this.system.mouse.x;
                 const mouseDy = this.y - this.system.mouse.y;
                 const mouseDist = Math.sqrt(mouseDx * mouseDx + mouseDy * mouseDy);
                 
-                if (mouseDist < 120 && mouseDist > 0) {
-                    const repelForce = (120 - mouseDist) / 120 * 3;
+                if (mouseDist < 150 && mouseDist > 0) {
+                    const repelForce = (150 - mouseDist) / 150 * 6; // Increased force
                     this.vx += (mouseDx / mouseDist) * repelForce;
                     this.vy += (mouseDy / mouseDist) * repelForce;
+                }
+                
+                // Subtle wander when not near mouse (keeps particles alive)
+                if (mouseDist > 100) {
+                    this.vx += (Math.random() - 0.5) * this.wanderForce;
+                    this.vy += (Math.random() - 0.5) * this.wanderForce;
+                }
+                
+                // Attraction to destination - WEAKER when near mouse
+                if (mouseDist > 80) {
+                    this.vx += dx * this.attractionForce;
+                    this.vy += dy * this.attractionForce;
+                } else {
+                    // Very weak attraction when mouse is close
+                    this.vx += dx * this.attractionForce * 0.05;
+                    this.vy += dy * this.attractionForce * 0.05;
                 }
                 
                 // Apply friction
@@ -327,7 +329,7 @@
                 this.vy *= this.friction;
                 
                 // Limit max velocity
-                const maxVel = 15;
+                const maxVel = 20; // Slightly higher for more dynamic movement
                 const vel = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
                 if (vel > maxVel) {
                     this.vx = (this.vx / vel) * maxVel;
@@ -338,26 +340,17 @@
                 this.x += this.vx;
                 this.y += this.vy;
                 
-                // If very close to destination, snap to it
-                if (dist < 2) {
-                    this.x = this.destX;
-                    this.y = this.destY;
-                    this.vx = 0;
-                    this.vy = 0;
-                }
-            }
-            
-            draw(ctx) {
-                // Drawing is handled in batch by parent
+                // NO SNAP - particles remain free to move forever
+                // The text will "breathe" and stay interactive
             }
         }
         
-        // Global state
+        // Global mouse state
         let mouseX = 0, mouseY = 0;
         let activeSystem = null;
         const particleSystems = [];
         
-        // Track mouse
+        // Mouse tracking
         window.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
@@ -366,7 +359,6 @@
             }
         });
         
-        // Initialize systems
         window.addEventListener('DOMContentLoaded', () => {
             const sections = document.querySelectorAll('.section');
             
@@ -381,14 +373,12 @@
                 }
             });
             
-            // Set initial active system
             if (particleSystems.length > 0) {
                 activeSystem = particleSystems[0];
                 activeSystem.setActive(true);
             }
         });
         
-        // Monitor section visibility
         const updateActiveSection = () => {
             const sections = document.querySelectorAll('.section');
             let currentIndex = -1;
@@ -401,12 +391,10 @@
             
             if (currentIndex !== -1 && particleSystems[currentIndex]) {
                 if (activeSystem !== particleSystems[currentIndex]) {
-                    // Deactivate old system
                     if (activeSystem) {
                         activeSystem.setActive(false);
                     }
                     
-                    // Activate new system
                     activeSystem = particleSystems[currentIndex];
                     activeSystem.setActive(true);
                     activeSystem.updateMouse(mouseX, mouseY);
@@ -414,10 +402,8 @@
             }
         };
         
-        // Check frequently (works with your scroll system)
         setInterval(updateActiveSection, 50);
         
-        // Handle resize
         window.addEventListener('resize', () => {
             particleSystems.forEach(system => {
                 system.resize();

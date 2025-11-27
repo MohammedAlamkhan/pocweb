@@ -14,19 +14,21 @@
             background-color: #111111;
             color: #ffffff;
             font-family: 'Roboto Mono', monospace;
+            cursor: none;
         }
         #webgl-canvas {
             position: fixed;
             top: 0;
             left: 0;
             outline: none;
+            z-index: 1;
         }
         #scroll-container {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 400vh; /* Controls scroll length */
+            height: 400vh;
             z-index: 2;
         }
         #content {
@@ -40,26 +42,53 @@
             align-items: center;
             text-align: center;
             pointer-events: none;
+            z-index: 3;
         }
         .section {
             position: absolute;
             opacity: 0;
-            transition: opacity 0.5s linear;
-            max-width: 80%;
+            transition: opacity 0.5s ease-in-out;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
         }
         .section.visible {
             opacity: 1;
+            pointer-events: auto;
         }
-        h1 {
+        
+        .particle-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: auto;
+        }
+        
+        .section h1 {
             font-size: clamp(2rem, 8vw, 6rem);
             font-weight: 700;
             text-transform: uppercase;
             margin: 0;
+            visibility: hidden;
+            position: absolute;
         }
+        
         p {
             font-size: clamp(1rem, 3vw, 1.5rem);
             max-width: 600px;
-            margin: 1em auto 0;
+            margin: 2em auto 0;
+            pointer-events: none;
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
         }
     </style>
 </head>
@@ -67,19 +96,23 @@
     <canvas id="webgl-canvas"></canvas>
     <div id="scroll-container"></div>
     <div id="content">
-        <div class="section" id="section0">
+        <div class="section visible" id="section0">
             <h1>THE LAPTOP REVOLUTION</h1>
+            <canvas class="particle-canvas" id="canvas0"></canvas>
         </div>
         <div class="section" id="section1">
             <h1>A NEW BREED</h1>
+            <canvas class="particle-canvas" id="canvas1"></canvas>
             <p>This is not just another laptop. It's the culmination of cutting-edge technology and design.</p>
         </div>
         <div class="section" id="section2">
             <h1>POWER & PERFORMANCE</h1>
+            <canvas class="particle-canvas" id="canvas2"></canvas>
             <p>Engineered for the most demanding tasks, from 3D rendering to complex data analysis.</p>
         </div>
         <div class="section" id="section3">
             <h1>DESIGNED FOR TOMORROW</h1>
+            <canvas class="particle-canvas" id="canvas3"></canvas>
             <p>A glimpse into the future of computing.</p>
         </div>
     </div>
@@ -94,5 +127,304 @@
         }
     </script>
     <script type="module" src="main.js"></script>
+    
+    <script>
+        class ParticleText {
+            constructor(canvasId, text, fontSize = '6rem') {
+                this.canvas = document.getElementById(canvasId);
+                if (!this.canvas) {
+                    console.error(`Canvas ${canvasId} not found`);
+                    return;
+                }
+                
+                this.ctx = this.canvas.getContext('2d');
+                this.text = text;
+                this.fontSize = fontSize;
+                this.particles = [];
+                this.textPositions = [];
+                this.mouse = { x: -9999, y: -9999 };
+                this.radius = 2;
+                this.active = false;
+                this.initialized = false;
+                
+                // Ensure DOM is ready
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', () => this.init());
+                } else {
+                    this.init();
+                }
+            }
+            
+            init() {
+                this.resize();
+                this.generateTextPositions();
+                this.createParticles();
+                this.initialized = true;
+                this.animate();
+                
+                // Set first section active by default
+                if (this.canvas.id === 'canvas0') {
+                    this.setActive(true);
+                }
+            }
+            
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+            
+            generateTextPositions() {
+                // Wait for fonts to load
+                if (document.fonts && !document.fonts.check('700 1rem Roboto Mono')) {
+                    document.fonts.ready.then(() => this.generateTextPositions());
+                    return;
+                }
+                
+                const tempCanvas = document.createElement('canvas');
+                const tempCtx = tempCanvas.getContext('2d');
+                tempCanvas.width = this.canvas.width;
+                tempCanvas.height = this.canvas.height;
+                
+                // Use actual rendered font size
+                const h1Element = document.querySelector('h1');
+                const computedStyle = getComputedStyle(h1Element);
+                const fontSize = computedStyle.fontSize;
+                const fontFamily = computedStyle.fontFamily;
+                
+                tempCtx.font = `700 ${fontSize} ${fontFamily}`;
+                tempCtx.textAlign = 'center';
+                tempCtx.textBaseline = 'middle';
+                tempCtx.fillStyle = '#ffffff';
+                
+                // Draw text at exact center
+                const centerX = tempCanvas.width / 2;
+                const centerY = tempCanvas.height / 2;
+                tempCtx.fillText(this.text, centerX, centerY);
+                
+                // Get pixel data
+                const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+                const data = imageData.data;
+                
+                this.textPositions = [];
+                const step = 4; // Sample every 4th pixel for performance
+                
+                for (let y = 0; y < tempCanvas.height; y += step) {
+                    for (let x = 0; x < tempCanvas.width; x += step) {
+                        const index = (y * tempCanvas.width + x) * 4;
+                        const alpha = data[index + 3];
+                        
+                        if (alpha > 128) { // Solid pixel
+                            this.textPositions.push({ x, y });
+                        }
+                    }
+                }
+                
+                console.log(`"${this.text}": ${this.textPositions.length} particles`);
+                
+                // If no text positions found, try again with larger step
+                if (this.textPositions.length === 0) {
+                    console.warn(`No text positions found for "${this.text}", retrying...`);
+                    setTimeout(() => this.generateTextPositions(), 100);
+                }
+            }
+            
+            createParticles() {
+                this.particles = [];
+                for (let i = 0; i < this.textPositions.length; i++) {
+                    this.particles.push(new Particle(this.textPositions[i].x, this.textPositions[i].y, this.radius, this));
+                }
+            }
+            
+            setActive(active) {
+                if (!this.initialized) return;
+                
+                this.active = active;
+                if (active) {
+                    // Reset all particles to animate in
+                    this.particles.forEach(p => p.reset());
+                }
+            }
+            
+            updateMouse(x, y) {
+                this.mouse.x = x;
+                this.mouse.y = y;
+            }
+            
+            animate() {
+                if (!this.initialized) {
+                    requestAnimationFrame(() => this.animate());
+                    return;
+                }
+                
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                if (this.active && this.particles.length > 0) {
+                    this.ctx.fillStyle = '#ffffff';
+                    
+                    // Draw all particles at once for better performance
+                    this.ctx.beginPath();
+                    for (let i = 0; i < this.particles.length; i++) {
+                        this.particles[i].update();
+                        const p = this.particles[i];
+                        this.ctx.moveTo(p.x + p.radius, p.y);
+                        this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    }
+                    this.ctx.fill();
+                }
+                
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+        
+        class Particle {
+            constructor(destX, destY, radius, system) {
+                this.destX = destX;
+                this.destY = destY;
+                this.radius = radius;
+                this.system = system;
+                this.reset();
+            }
+            
+            reset() {
+                // Start from random position off-screen
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.max(this.system.canvas.width, this.system.canvas.height) * 0.6;
+                
+                this.x = this.system.canvas.width / 2 + Math.cos(angle) * distance;
+                this.y = this.system.canvas.height / 2 + Math.sin(angle) * distance;
+                
+                // Random velocity
+                this.vx = (Math.random() - 0.5) * 15;
+                this.vy = (Math.random() - 0.5) * 15;
+                
+                this.friction = 0.96;
+                this.attractionForce = 0.02; // Strength of pull toward text
+            }
+            
+            update() {
+                // Calculate distance to destination
+                const dx = this.destX - this.x;
+                const dy = this.destY - this.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                // Attraction to destination
+                this.vx += dx * this.attractionForce;
+                this.vy += dy * this.attractionForce;
+                
+                // Mouse repulsion (only if close)
+                const mouseDx = this.x - this.system.mouse.x;
+                const mouseDy = this.y - this.system.mouse.y;
+                const mouseDist = Math.sqrt(mouseDx * mouseDx + mouseDy * mouseDy);
+                
+                if (mouseDist < 120 && mouseDist > 0) {
+                    const repelForce = (120 - mouseDist) / 120 * 3;
+                    this.vx += (mouseDx / mouseDist) * repelForce;
+                    this.vy += (mouseDy / mouseDist) * repelForce;
+                }
+                
+                // Apply friction
+                this.vx *= this.friction;
+                this.vy *= this.friction;
+                
+                // Limit max velocity
+                const maxVel = 15;
+                const vel = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+                if (vel > maxVel) {
+                    this.vx = (this.vx / vel) * maxVel;
+                    this.vy = (this.vy / vel) * maxVel;
+                }
+                
+                // Update position
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                // If very close to destination, snap to it
+                if (dist < 2) {
+                    this.x = this.destX;
+                    this.y = this.destY;
+                    this.vx = 0;
+                    this.vy = 0;
+                }
+            }
+            
+            draw(ctx) {
+                // Drawing is handled in batch by parent
+            }
+        }
+        
+        // Global state
+        let mouseX = 0, mouseY = 0;
+        let activeSystem = null;
+        const particleSystems = [];
+        
+        // Track mouse
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            if (activeSystem) {
+                activeSystem.updateMouse(mouseX, mouseY);
+            }
+        });
+        
+        // Initialize systems
+        window.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('.section');
+            
+            sections.forEach((section, index) => {
+                const h1 = section.querySelector('h1');
+                if (h1) {
+                    const canvasId = `canvas${index}`;
+                    const text = h1.textContent.trim();
+                    const system = new ParticleText(canvasId, text);
+                    particleSystems.push(system);
+                    console.log(`Created system for: "${text}"`);
+                }
+            });
+            
+            // Set initial active system
+            if (particleSystems.length > 0) {
+                activeSystem = particleSystems[0];
+                activeSystem.setActive(true);
+            }
+        });
+        
+        // Monitor section visibility
+        const updateActiveSection = () => {
+            const sections = document.querySelectorAll('.section');
+            let currentIndex = -1;
+            
+            sections.forEach((section, index) => {
+                if (section.classList.contains('visible')) {
+                    currentIndex = index;
+                }
+            });
+            
+            if (currentIndex !== -1 && particleSystems[currentIndex]) {
+                if (activeSystem !== particleSystems[currentIndex]) {
+                    // Deactivate old system
+                    if (activeSystem) {
+                        activeSystem.setActive(false);
+                    }
+                    
+                    // Activate new system
+                    activeSystem = particleSystems[currentIndex];
+                    activeSystem.setActive(true);
+                    activeSystem.updateMouse(mouseX, mouseY);
+                }
+            }
+        };
+        
+        // Check frequently (works with your scroll system)
+        setInterval(updateActiveSection, 50);
+        
+        // Handle resize
+        window.addEventListener('resize', () => {
+            particleSystems.forEach(system => {
+                system.resize();
+                system.generateTextPositions();
+                system.createParticles();
+            });
+        });
+    </script>
 </body>
 </html>

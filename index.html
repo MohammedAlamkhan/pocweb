@@ -32,34 +32,50 @@
             z-index: 2;
         }
         #content {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            pointer-events: none;
-            z-index: 3;
+           position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        /* Keep pointer-events: none; for the fixed container */
+        pointer-events: none; 
+        z-index: 3;
         }
-        .section {
-            position: absolute;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            pointer-events: none;
-        }
+      .section {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        
+        /* Transition opacity smoothly, but keep visibility and z-index sharp */
+        transition: opacity 0.1s ease-out; 
+
+        /* 1. Ensure invisible when inactive */
+        opacity: 0; 
+        /* 2. Hide from screen reader and layout when inactive */
+        visibility: hidden; 
+        /* 3. Give it a base z-index */
+        z-index: 5; 
+        /* Prevent interaction when inactive */
+        pointer-events: none; 
+    }
         .section.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        /* Full visibility when active */
+        opacity: 1; 
+        /* Make visible immediately when active */
+        visibility: visible; 
+        /* Bring the active section to the front immediately */
+        z-index: 10; 
+        /* Allow interaction with active section */
+        pointer-events: auto; 
+    }
         
         .particle-canvas {
             position: absolute;
@@ -83,12 +99,13 @@
             font-size: clamp(1rem, 3vw, 1.5rem);
             max-width: 600px;
             margin: 2em auto 0;
-            pointer-events: none;
             position: absolute;
             bottom: 20%;
             left: 50%;
             transform: translateX(-50%);
             z-index: 10;
+            /* Ensure the text is always visible when the section is visible */
+            opacity: 1; 
         }
     </style>
 </head>
@@ -252,7 +269,8 @@
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
                 
                 if (this.active && this.particles.length > 0) {
-                    this.ctx.fillStyle = '#ffffff';
+                    // Changed fillStyle to red
+                    this.ctx.fillStyle = '#ff0000'; 
                     
                     this.ctx.beginPath();
                     for (let i = 0; i < this.particles.length; i++) {
@@ -296,7 +314,7 @@
                 // Calculate distances
                 const dx = this.destX - this.x;
                 const dy = this.destY - this.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
+                // const dist = Math.sqrt(dx * dx + dy * dy); // 'dist' is not used later
                 
                 // Mouse repulsion - apply FIRST and make it stronger
                 const mouseDx = this.x - this.system.mouse.x;
@@ -340,9 +358,6 @@
                 // Update position
                 this.x += this.vx;
                 this.y += this.vy;
-                
-                // NO SNAP - particles remain free to move forever
-                // The text will "breathe" and stay interactive
             }
         }
         

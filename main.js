@@ -113,18 +113,38 @@ function onScroll() {
     updateSections();
 }
 
+/**
+ * Updates the visibility of the content sections based on scroll progress.
+ * NOTE: The particle system activation in the HTML script relies on the 'visible' class.
+ * By removing the CSS opacity interpolation here, we ensure the entire section 
+ * (subheading) appears/disappears sharply, matching the particle system's activation/deactivation.
+ */
 function updateSections() {
     const sections = document.querySelectorAll('.section');
     const sectionCount = sections.length;
+    const centerTolerance = 0.5; // How wide the "active" zone is (0.5 means half the section's scroll space)
+    let activeSectionIndex = -1;
     
+    // Determine the single active section index
     sections.forEach((section, index) => {
-        const sectionCenter = (index + 0.5) / sectionCount;
-        const distance = Math.abs(scrollProgress - sectionCenter);
+        const sectionStart = index / sectionCount;
+        const sectionEnd = (index + 1) / sectionCount;
         
-        const opacity = Math.max(0, 1 - distance * sectionCount);
-        
-        section.classList.toggle('visible', opacity > 0);
-        section.style.opacity = Math.pow(opacity, 3).toString();
+        // Use a strict check to find the currently active section based on where scrollProgress falls
+        if (scrollProgress >= sectionStart && scrollProgress < sectionEnd) {
+            activeSectionIndex = index;
+        }
+    });
+
+    // Toggle visibility based ONLY on the single active section index
+    sections.forEach((section, index) => {
+        if (index === activeSectionIndex) {
+            // Force the active section to be visible
+            section.classList.add('visible');
+        } else {
+            // Force all other sections to be inactive
+            section.classList.remove('visible');
+        }
     });
 }
 

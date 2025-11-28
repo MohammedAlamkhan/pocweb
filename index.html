@@ -209,8 +209,8 @@
             font-weight: 700;
             text-transform: uppercase;
             margin: 0;
-            visibility: hidden;
             position: absolute;
+            visibility: hidden;
         }
         
         p {
@@ -590,6 +590,8 @@
                 this.ctx = this.canvas.getContext('2d');
                 this.text = text;
                 this.particles = [];
+                this.headingParticles = [];
+                this.hexagonParticles = [];
                 this.hexagons = [];
                 this.logos = [];
                 this.mouse = { x: -9999, y: -9999 };
@@ -597,7 +599,7 @@
                 this.initialized = false;
                 this.headingPositions = [];
 
-                this.logoCount = 12;
+                this.logoCount = 13;
                 this.logoSize = 100;
                 this.loadedLogos = 0;
 
@@ -720,20 +722,36 @@
             loadLogos() {
                 for (let i = 0; i < this.logoCount; i++) {
                     const img = new Image();
-                    img.src = `client${i+1}.svg`;
+                    const logoIndex = i;
+                    img.src = `${i + 1}.webp`;
                     img.onload = () => {
+                        const tempCanvas = document.createElement('canvas');
+                        const tempCtx = tempCanvas.getContext('2d');
+                        tempCanvas.width = img.width;
+                        tempCanvas.height = img.height;
+
+                        // Draw the original logo
+                        tempCtx.drawImage(img, 0, 0);
+
+                        // Use 'source-in' to fill the logo shape with white
+                        tempCtx.globalCompositeOperation = 'source-in';
+                        tempCtx.fillStyle = 'white';
+                        tempCtx.fillRect(0, 0, img.width, img.height);
+
+                        this.logos[logoIndex] = tempCanvas; // Replace image with canvas
                         this.loadedLogos++;
                     };
-                    this.logos.push(img);
+                    this.logos.push(img); // Push original image, it will be replaced
                 }
             }
 
             createParticles() {
-                this.particles = [];
+                this.headingParticles = [];
                 for (let i = 0; i < this.headingPositions.length; i++) {
-                    this.particles.push(new Particle(this.headingPositions[i].x, this.headingPositions[i].y, 1.5, this));
+                    this.headingParticles.push(new Particle(this.headingPositions[i].x, this.headingPositions[i].y, 1.5, this));
                 }
 
+                this.hexagonParticles = [];
                 this.hexagons.forEach(hex => {
                     for (let i = 0; i < 6; i++) {
                         const angle_deg = 60 * i - 30;
@@ -751,10 +769,11 @@
                             const t = j / (numParticlesPerSide -1);
                             const destX = startX + (endX - startX) * t;
                             const destY = startY + (endY - startY) * t;
-                            this.particles.push(new Particle(destX, destY, 1.5, this));
+                            this.hexagonParticles.push(new Particle(destX, destY, 1.5, this));
                         }
                     }
                 });
+                this.particles = [...this.headingParticles, ...this.hexagonParticles];
             }
 
             setActive(active) {
@@ -779,16 +798,19 @@
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
                 if (this.active) {
+                    // Update all particles
+                    this.particles.forEach(p => p.update());
+
+                    // Draw heading particles
                     this.ctx.fillStyle = '#ff0000';
                     this.ctx.beginPath();
-                    for (let i = 0; i < this.particles.length; i++) {
-                        this.particles[i].update();
-                        const p = this.particles[i];
+                    this.headingParticles.forEach(p => {
                         this.ctx.moveTo(p.x + p.radius, p.y);
                         this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                    }
+                    });
                     this.ctx.fill();
 
+                    // Draw logos and their backgrounds
                     if (this.loadedLogos >= this.logoCount) {
                         let logoIndex = 0;
                         this.hexagons.forEach(hex => {
@@ -807,17 +829,45 @@
                                     }
                                 }
                                 this.ctx.closePath();
+
+                                // Create and apply gradient background
+                                const gradient = this.ctx.createRadialGradient(hex.x, hex.y, 0, hex.x, hex.y, hex.size);
+                                gradient.addColorStop(0, '#555');
+                                gradient.addColorStop(1, '#333');
+                                this.ctx.fillStyle = gradient;
+                                this.ctx.fill();
+
                                 this.ctx.clip();
 
                                 const logo = this.logos[logoIndex];
-                                const logoDisplaySize = hex.size * 1.6;
-                                this.ctx.drawImage(logo, hex.x - logoDisplaySize / 2, hex.y - logoDisplaySize / 2, logoDisplaySize, logoDisplaySize);
+                                const logoAspectRatio = logo.width / logo.height;
+                                const maxDrawSize = hex.size * 1.5; // To have some padding
+                                let drawWidth, drawHeight;
+
+                                if (logoAspectRatio > 1) { // wider
+                                    drawWidth = maxDrawSize;
+                                    drawHeight = maxDrawSize / logoAspectRatio;
+                                } else { // taller or square
+                                    drawHeight = maxDrawSize;
+                                    drawWidth = maxDrawSize * logoAspectRatio;
+                                }
+                                
+                                this.ctx.drawImage(logo, hex.x - drawWidth / 2, hex.y - drawHeight / 2, drawWidth, drawHeight);
                                 
                                 this.ctx.restore();
                                 logoIndex++;
                             }
                         });
                     }
+
+                    // Draw hexagon border particles
+                    this.ctx.fillStyle = '#ff0000';
+                    this.ctx.beginPath();
+                    this.hexagonParticles.forEach(p => {
+                        this.ctx.moveTo(p.x + p.radius, p.y);
+                        this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    });
+                    this.ctx.fill();
                 }
 
                 requestAnimationFrame(() => this.animate());

@@ -418,7 +418,6 @@
         <div class="section" id="section2">
             <h1>OUR CLIENTS</h1>
             <canvas class="particle-canvas" id="canvas2"></canvas>
-            <p>Engineered for the most demanding tasks, from 3D rendering to complex data analysis.</p>
         </div>
         <div class="section" id="section3">
             <h1>CONTACT US</h1>
@@ -451,6 +450,250 @@
         menu.addEventListener('click', () => {
             navMenu.classList.toggle('active');
         });
+
+        class HexagonGrid {
+            constructor(canvasId, text) {
+                this.canvas = document.getElementById(canvasId);
+                if (!this.canvas) {
+                    console.error(`Canvas ${canvasId} not found`);
+                    return;
+                }
+                this.ctx = this.canvas.getContext('2d');
+                this.text = text;
+                this.particles = [];
+                this.hexagons = [];
+                this.logos = [];
+                this.mouse = { x: -9999, y: -9999 };
+                this.active = false;
+                this.initialized = false;
+                this.headingPositions = [];
+
+                this.logoCount = 12;
+                this.logoSize = 100;
+                this.loadedLogos = 0;
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', () => this.init());
+                } else {
+                    this.init();
+                }
+            }
+
+            init() {
+                this.resize();
+                this.generateHeadingPositions();
+                this.calculateHexagonLayout();
+                this.createParticles();
+                this.loadLogos();
+                this.initialized = true;
+                this.animate();
+            }
+
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+
+            generateHeadingPositions() {
+                if (document.fonts && !document.fonts.check('700 1rem Roboto Mono')) {
+                    document.fonts.ready.then(() => this.generateHeadingPositions());
+                    return;
+                }
+
+                const tempCanvas = document.createElement('canvas');
+                const tempCtx = tempCanvas.getContext('2d');
+                tempCanvas.width = this.canvas.width;
+                tempCanvas.height = this.canvas.height;
+
+                const sectionId = this.canvas.id.replace('canvas', 'section');
+                const h1Element = document.querySelector(`#${sectionId} h1`);
+                const computedStyle = getComputedStyle(h1Element);
+                const fontSize = computedStyle.fontSize;
+                const fontFamily = computedStyle.fontFamily;
+
+                tempCtx.font = `700 ${fontSize} ${fontFamily}`;
+                tempCtx.textAlign = 'center';
+                tempCtx.textBaseline = 'middle';
+                tempCtx.fillStyle = '#ffffff';
+
+                const centerX = tempCanvas.width / 2;
+                const centerY = tempCanvas.height / 2;
+                tempCtx.fillText(this.text, centerX, centerY);
+
+                const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+                const data = imageData.data;
+
+                this.headingPositions = [];
+                const step = 4;
+
+                for (let y = 0; y < tempCanvas.height; y += step) {
+                    for (let x = 0; x < tempCanvas.width; x += step) {
+                        const index = (y * tempCanvas.width + x) * 4;
+                        const alpha = data[index + 3];
+
+                        if (alpha > 128) {
+                            this.headingPositions.push({ x, y });
+                        }
+                    }
+                }
+                if (this.headingPositions.length === 0) {
+                    console.warn(`No text positions found for "${this.text}", retrying...`);
+                    setTimeout(() => this.generateHeadingPositions(), 100);
+                }
+            }
+
+            calculateHexagonLayout() {
+                const hexSize = 140;
+                const gridRadius = 3; // creates a hexagon of hexagons
+                const centerX = this.canvas.width / 2;
+                const centerY = this.canvas.height / 2;
+
+                this.hexagons = [];
+                let allPossibleHexagons = [];
+
+                for (let q = -gridRadius; q <= gridRadius; q++) {
+                    for (let r = -gridRadius; r <= gridRadius; r++) {
+                        if (Math.abs(q + r) > gridRadius) continue;
+
+                        const x = centerX + hexSize * Math.sqrt(3) * (q + r/2);
+                        const y = centerY + hexSize * 3/2 * r;
+
+                        // Check if hexagon overlaps with heading text area
+                        const headingBox = {
+                            left: centerX - 300,
+                            right: centerX + 300,
+                            top: centerY - 80,
+                            bottom: centerY + 80
+                        };
+                        if (x > headingBox.left && x < headingBox.right && y > headingBox.top && y < headingBox.bottom) {
+                            continue;
+                        }
+
+                        // Calculate distance from the center of the canvas (where the heading is)
+                        const dist = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2));
+                        allPossibleHexagons.push({ x, y, size: hexSize, hasLogo: false, distance: dist });
+                    }
+                }
+
+                // Sort hexagons by distance to the center
+                allPossibleHexagons.sort((a, b) => a.distance - b.distance);
+
+                // Assign logos to the closest hexagons
+                for (let i = 0; i < allPossibleHexagons.length; i++) {
+                    const hex = allPossibleHexagons[i];
+                    if (i < this.logoCount) {
+                        hex.hasLogo = true;
+                    }
+                    this.hexagons.push(hex);
+                }
+            }
+
+            loadLogos() {
+                for (let i = 0; i < this.logoCount; i++) {
+                    const img = new Image();
+                    img.src = `client${i+1}.svg`;
+                    img.onload = () => {
+                        this.loadedLogos++;
+                    };
+                    this.logos.push(img);
+                }
+            }
+
+            createParticles() {
+                this.particles = [];
+                for (let i = 0; i < this.headingPositions.length; i++) {
+                    this.particles.push(new Particle(this.headingPositions[i].x, this.headingPositions[i].y, 1.5, this));
+                }
+
+                this.hexagons.forEach(hex => {
+                    for (let i = 0; i < 6; i++) {
+                        const angle_deg = 60 * i - 30;
+                        const angle_rad = Math.PI / 180 * angle_deg;
+                        const startX = hex.x + hex.size * Math.cos(angle_rad);
+                        const startY = hex.y + hex.size * Math.sin(angle_rad);
+
+                        const angle_deg2 = 60 * (i + 1) - 30;
+                        const angle_rad2 = Math.PI / 180 * angle_deg2;
+                        const endX = hex.x + hex.size * Math.cos(angle_rad2);
+                        const endY = hex.y + hex.size * Math.sin(angle_rad2);
+
+                        const numParticlesPerSide = 70;
+                        for (let j = 0; j < numParticlesPerSide; j++) {
+                            const t = j / (numParticlesPerSide -1);
+                            const destX = startX + (endX - startX) * t;
+                            const destY = startY + (endY - startY) * t;
+                            this.particles.push(new Particle(destX, destY, 1.5, this));
+                        }
+                    }
+                });
+            }
+
+            setActive(active) {
+                if (!this.initialized) return;
+                this.active = active;
+                if (active) {
+                    this.particles.forEach(p => p.reset());
+                }
+            }
+
+            updateMouse(x, y) {
+                this.mouse.x = x;
+                this.mouse.y = y;
+            }
+
+            animate() {
+                if (!this.initialized) {
+                    requestAnimationFrame(() => this.animate());
+                    return;
+                }
+
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                if (this.active) {
+                    this.ctx.fillStyle = '#ff0000';
+                    this.ctx.beginPath();
+                    for (let i = 0; i < this.particles.length; i++) {
+                        this.particles[i].update();
+                        const p = this.particles[i];
+                        this.ctx.moveTo(p.x + p.radius, p.y);
+                        this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    }
+                    this.ctx.fill();
+
+                    if (this.loadedLogos >= this.logoCount) {
+                        let logoIndex = 0;
+                        this.hexagons.forEach(hex => {
+                            if (hex.hasLogo && logoIndex < this.logos.length) {
+                                this.ctx.save();
+                                this.ctx.beginPath();
+                                for (let i = 0; i < 6; i++) {
+                                    const angle_deg = 60 * i - 30;
+                                    const angle_rad = Math.PI / 180 * angle_deg;
+                                    const x_ = hex.x + hex.size * Math.cos(angle_rad);
+                                    const y_ = hex.y + hex.size * Math.sin(angle_rad);
+                                    if (i === 0) {
+                                        this.ctx.moveTo(x_, y_);
+                                    } else {
+                                        this.ctx.lineTo(x_, y_);
+                                    }
+                                }
+                                this.ctx.closePath();
+                                this.ctx.clip();
+
+                                const logo = this.logos[logoIndex];
+                                const logoDisplaySize = hex.size * 1;
+                                this.ctx.drawImage(logo, hex.x - logoDisplaySize / 2, hex.y - logoDisplaySize / 2, logoDisplaySize, logoDisplaySize);
+                                
+                                this.ctx.restore();
+                                logoIndex++;
+                            }
+                        });
+                    }
+                }
+
+                requestAnimationFrame(() => this.animate());
+            }
+        }
 
         class ParticleText {
             constructor(canvasId, text, fontSize = '6rem') {
@@ -505,7 +748,8 @@
                 tempCanvas.width = this.canvas.width;
                 tempCanvas.height = this.canvas.height;
                 
-                const h1Element = document.querySelector('h1');
+                const sectionId = this.canvas.id.replace('canvas', 'section');
+                const h1Element = document.querySelector(`#${sectionId} h1`);
                 const computedStyle = getComputedStyle(h1Element);
                 const fontSize = computedStyle.fontSize;
                 const fontFamily = computedStyle.fontFamily;
@@ -685,9 +929,15 @@
                 if (h1) {
                     const canvasId = `canvas${index}`;
                     const text = h1.textContent.trim();
-                    const system = new ParticleText(canvasId, text);
-                    particleSystems.push(system);
-                    console.log(`Created system for: "${text}"`);
+                    if (canvasId === 'canvas2') {
+                        const system = new HexagonGrid(canvasId, text);
+                        particleSystems.push(system);
+                        console.log(`Created hexagon grid system for: "${text}"`);
+                    } else {
+                        const system = new ParticleText(canvasId, text);
+                        particleSystems.push(system);
+                        console.log(`Created system for: "${text}"`);
+                    }
                 }
             });
             
@@ -725,8 +975,15 @@
         window.addEventListener('resize', () => {
             particleSystems.forEach(system => {
                 system.resize();
-                system.generateTextPositions();
-                system.createParticles();
+                // For HexagonGrid, recalculate layout and particles on resize
+                if (system instanceof HexagonGrid) {
+                    system.generateHeadingPositions();
+                    system.calculateHexagonLayout();
+                    system.createParticles();
+                } else { // For ParticleText
+                    system.generateTextPositions();
+                    system.createParticles();
+                }
             });
         });
     </script>

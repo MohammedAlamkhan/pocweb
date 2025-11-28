@@ -373,16 +373,16 @@
             </div>
             <ul class="nav-menu">
                 <li class="nav-item">
-                    <a href="#" class="nav-links">Home</a>
+                    <a href="./index.html" class="nav-links">HOME</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-links">Services</a>
+                    <a href="./about.html" class="nav-links">ABOUT</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-links">About</a>
+                    <a href="#" class="nav-links">SERVICES</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-links">Contact</a>
+                    <a href="#" class="nav-links">CAREERS</a>
                 </li>
             </ul>
         </div>
@@ -391,9 +391,7 @@
     <div id="scroll-container"></div>
     <div id="content">
         <div class="section visible" id="section0">
-            <h1>MOMENTUM SERVICES</h1>
             <canvas class="particle-canvas" id="canvas0"></canvas>
-             <p>Empowering Client with Skills and Solutions</p>
         </div>
         <div class="section" id="section1">
             <h1>OUR SERVICES</h1>
@@ -450,6 +448,137 @@
         menu.addEventListener('click', () => {
             navMenu.classList.toggle('active');
         });
+
+        class ParticleImage {
+            constructor(canvasId, imagePath) {
+                this.canvas = document.getElementById(canvasId);
+                if (!this.canvas) {
+                    console.error(`Canvas ${canvasId} not found`);
+                    return;
+                }
+                this.ctx = this.canvas.getContext('2d');
+                this.imagePath = imagePath;
+                this.image = new Image();
+                this.particles = [];
+                this.imagePositions = [];
+                this.mouse = { x: -9999, y: -9999 };
+                this.radius = 2;
+                this.active = false;
+                this.initialized = false;
+
+                this.image.onload = () => {
+                    this.init();
+                };
+                this.image.src = this.imagePath;
+            }
+
+            init() {
+                this.resize();
+                this.generateImagePositions();
+                this.createParticles();
+                this.initialized = true;
+                this.animate();
+
+                if (this.canvas.id === 'canvas0') {
+                    this.setActive(true);
+                }
+            }
+
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+
+            generateImagePositions() {
+                const tempCanvas = document.createElement('canvas');
+                const tempCtx = tempCanvas.getContext('2d');
+
+                const aspectRatio = this.image.width / this.image.height;
+                let drawWidth, drawHeight;
+                const scaleFactor = 0.8; // New scaling factor
+
+                // Calculate dimensions to fit within 75% of the canvas
+                const targetWidth = this.canvas.width * scaleFactor;
+                const targetHeight = this.canvas.height * scaleFactor;
+
+                if (targetWidth / targetHeight > aspectRatio) {
+                    drawHeight = targetHeight;
+                    drawWidth = targetHeight * aspectRatio;
+                } else {
+                    drawWidth = targetWidth;
+                    drawHeight = targetWidth / aspectRatio;
+                }
+
+                tempCanvas.width = this.canvas.width;
+                tempCanvas.height = this.canvas.height;
+
+                const offsetX = (this.canvas.width - drawWidth) / 2;
+                const offsetY = (this.canvas.height - drawHeight) / 2;
+
+                tempCtx.drawImage(this.image, offsetX, offsetY, drawWidth, drawHeight);
+
+                const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+                const data = imageData.data;
+
+                this.imagePositions = [];
+                const step = 4; // Sample every 'step' pixels
+
+                for (let y = 0; y < tempCanvas.height; y += step) {
+                    for (let x = 0; x < tempCanvas.width; x += step) {
+                        const index = (y * tempCanvas.width + x) * 4;
+                        const alpha = data[index + 3];
+
+                        if (alpha > 128) { // Only consider non-transparent pixels
+                            this.imagePositions.push({ x, y });
+                        }
+                    }
+                }
+                console.log(`"${this.imagePath}": ${this.imagePositions.length} particles`);
+            }
+
+            createParticles() {
+                this.particles = [];
+                for (let i = 0; i < this.imagePositions.length; i++) {
+                    this.particles.push(new Particle(this.imagePositions[i].x, this.imagePositions[i].y, this.radius, this));
+                }
+            }
+
+            setActive(active) {
+                if (!this.initialized) return;
+                this.active = active;
+                if (active) {
+                    this.particles.forEach(p => p.reset());
+                }
+            }
+
+            updateMouse(x, y) {
+                this.mouse.x = x;
+                this.mouse.y = y;
+            }
+
+            animate() {
+                if (!this.initialized) {
+                    requestAnimationFrame(() => this.animate());
+                    return;
+                }
+
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                if (this.active && this.particles.length > 0) {
+                    this.ctx.fillStyle = '#ff0000'; // Particles color
+                    this.ctx.beginPath();
+                    for (let i = 0; i < this.particles.length; i++) {
+                        this.particles[i].update();
+                        const p = this.particles[i];
+                        this.ctx.moveTo(p.x + p.radius, p.y);
+                        this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    }
+                    this.ctx.fill();
+                }
+
+                requestAnimationFrame(() => this.animate());
+            }
+        }
 
         class HexagonGrid {
             constructor(canvasId, text) {
@@ -543,7 +672,7 @@
             }
 
             calculateHexagonLayout() {
-                const hexSize = 140;
+                const hexSize = 80;
                 const gridRadius = 3; // creates a hexagon of hexagons
                 const centerX = this.canvas.width / 2;
                 const centerY = this.canvas.height / 2;
@@ -617,7 +746,7 @@
                         const endX = hex.x + hex.size * Math.cos(angle_rad2);
                         const endY = hex.y + hex.size * Math.sin(angle_rad2);
 
-                        const numParticlesPerSide = 70;
+                        const numParticlesPerSide = 15;
                         for (let j = 0; j < numParticlesPerSide; j++) {
                             const t = j / (numParticlesPerSide -1);
                             const destX = startX + (endX - startX) * t;
@@ -681,7 +810,7 @@
                                 this.ctx.clip();
 
                                 const logo = this.logos[logoIndex];
-                                const logoDisplaySize = hex.size * 1;
+                                const logoDisplaySize = hex.size * 1.6;
                                 this.ctx.drawImage(logo, hex.x - logoDisplaySize / 2, hex.y - logoDisplaySize / 2, logoDisplaySize, logoDisplaySize);
                                 
                                 this.ctx.restore();
@@ -926,18 +1055,22 @@
             
             sections.forEach((section, index) => {
                 const h1 = section.querySelector('h1');
-                if (h1) {
-                    const canvasId = `canvas${index}`;
-                    const text = h1.textContent.trim();
-                    if (canvasId === 'canvas2') {
-                        const system = new HexagonGrid(canvasId, text);
-                        particleSystems.push(system);
-                        console.log(`Created hexagon grid system for: "${text}"`);
-                    } else {
-                        const system = new ParticleText(canvasId, text);
-                        particleSystems.push(system);
-                        console.log(`Created system for: "${text}"`);
-                    }
+                const canvasId = `canvas${index}`;
+                
+                if (canvasId === 'canvas0') { // This is the landing page
+                    const system = new ParticleImage(canvasId, 'mbg.webp'); // Use the new class
+                    particleSystems.push(system);
+                    console.log(`Created particle image system for: "mbg.webp"`);
+                } else if (canvasId === 'canvas2') {
+                    const text = h1 ? h1.textContent.trim() : '';
+                    const system = new HexagonGrid(canvasId, text);
+                    particleSystems.push(system);
+                    console.log(`Created hexagon grid system for: "${text}"`);
+                } else {
+                    const text = h1 ? h1.textContent.trim() : '';
+                    const system = new ParticleText(canvasId, text);
+                    particleSystems.push(system);
+                    console.log(`Created system for: "${text}"`);
                 }
             });
             
@@ -975,12 +1108,15 @@
         window.addEventListener('resize', () => {
             particleSystems.forEach(system => {
                 system.resize();
-                // For HexagonGrid, recalculate layout and particles on resize
                 if (system instanceof HexagonGrid) {
                     system.generateHeadingPositions();
                     system.calculateHexagonLayout();
                     system.createParticles();
-                } else { // For ParticleText
+                } else if (system instanceof ParticleImage) { // Add this block
+                    system.generateImagePositions();
+                    system.createParticles();
+                }
+                else { // For ParticleText
                     system.generateTextPositions();
                     system.createParticles();
                 }
@@ -1012,7 +1148,7 @@
             this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true });
             this.renderer.setPixelRatio(window.devicePixelRatio);
             this.renderer.setSize(window.innerWidth, window.innerHeight);
-            this.renderer.setClearColor(0x020108);
+            this.renderer.setClearColor(0x00011d); // Set to match body background color
 
             const renderScene = new RenderPass(this.scene, this.camera);
             const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
@@ -1036,8 +1172,7 @@
             const basePositions = new Float32Array(count * 3);
             const baseColors = new Float32Array(count * 3);
 
-            const colorRange = { hue: [0.6, 0.9], sat: [0.7, 1], light: [0.5, 0.7] };
-
+            // Removed colorRange and HSL calculation for solid red particles
             for (let i = 0; i < count; i++) {
                 const i3 = i * 3;
                 
@@ -1054,22 +1189,19 @@
                 basePositions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
                 basePositions[i3 + 2] = radius * Math.cos(phi) - 50;
 
-                const dist = Math.random();
-                const hue = THREE.MathUtils.lerp(colorRange.hue[0], colorRange.hue[1], dist);
-                const sat = THREE.MathUtils.lerp(colorRange.sat[0], colorRange.sat[1], dist);
-                const light = THREE.MathUtils.lerp(colorRange.light[0], colorRange.light[1], dist);
-                const color = new THREE.Color().setHSL(hue, sat, light);
-                colors[i3] = baseColors[i3] = color.r;
-                colors[i3 + 1] = baseColors[i3 + 1] = color.g;
-                colors[i3 + 2] = baseColors[i3 + 2] = color.b;
+                // No color calculation needed for solid red
+                colors[i3] = baseColors[i3] = 1; // Red
+                colors[i3 + 1] = baseColors[i3 + 1] = 0; // Green
+                colors[i3 + 2] = baseColors[i3 + 2] = 0; // Blue
             }
 
             geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            // geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3)); // Removed as vertexColors is false
             
             const material = new THREE.PointsMaterial({
                 size: 0.3,
-                vertexColors: true,
+                color: new THREE.Color(0xff0000), // Solid red color
+                // vertexColors: false, // Default is false, explicitly stating for clarity
                 transparent: true,
                 opacity: 0.8,
                 blending: THREE.AdditiveBlending,

@@ -7,14 +7,132 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
             margin: 0;
             overflow-x: hidden;
-            background-color: #111111;
+            background-color: #00011d;
             color: #ffffff;
             font-family: 'Roboto Mono', monospace;
             cursor: auto;
+        }
+        /* Navbar Styles */
+        .navbar {
+            background: #00011d;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            width: 100%;
+        }
+
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            height: 80px;
+            z-index: 1;
+            width: 100%;
+            padding: 0 10px;
+        }
+
+        .navbar-logo {
+            color: #fff;
+            justify-self: start;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-logo img {
+            height: 50px;
+            width: auto;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            list-style: none;
+            text-align: center;
+        }
+
+        .nav-item {
+            height: 80px;
+        }
+
+        .nav-links {
+            color: #fff;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            padding: 0 1rem;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .nav-links:hover {
+            border-bottom: 3px solid #f40303;
+        }
+
+        .menu-icon {
+            display: none;
+        }
+
+        @media screen and (max-width: 960px) {
+            .nav-menu {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                height: 90vh;
+                position: absolute;
+                top: 80px;
+                left: -100%;
+                opacity: 1;
+                transition: all 0.5s ease;
+            }
+
+            .nav-menu.active {
+                background: #00011d;
+                left: 0;
+                opacity: 1;
+                transition: all 0.5s ease;
+                z-index: 1;
+            }
+
+            .nav-links {
+                text-align: center;
+                padding: 2rem;
+                width: 100%;
+                display: table;
+            }
+
+            .nav-links:hover {
+                border-bottom: none;
+                color: #f40303;
+            }
+
+            .navbar-logo {
+                position: absolute;
+                top: 0;
+                left: 0;
+                transform: translate(25%, 25%);
+            }
+
+            .menu-icon {
+                display: block;
+                position: absolute;
+                top: 0;
+                right: 0;
+                transform: translate(-100%, 60%);
+                font-size: 1.8rem;
+                cursor: pointer;
+            }
         }
         #webgl-canvas {
             position: fixed;
@@ -107,9 +225,168 @@
             /* Ensure the text is always visible when the section is visible */
             opacity: 1; 
         }
+
+        .button-container {
+            display: flex;
+            gap: 40px;
+            position: absolute;
+            top: 65%;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+        .service-button {
+            position: relative;
+            display: inline-block;
+            padding: 25px 30px;
+            color: #f40303;
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: 0.5s;
+            letter-spacing: 4px;
+            overflow: hidden;
+        }
+        .service-button:hover {
+            background: #f40303;
+            color: #050801;
+            box-shadow: 0 0 5px #f40303,
+                        0 0 25px #f40303,
+                        0 0 50px #f40303,
+                        0 0 200px #f40303;
+            -webkit-box-reflect:below 1px linear-gradient(transparent, #0005);
+        }
+        /* Removed hue-rotate filters to make both buttons the same color */
+        .service-button span {
+            position: absolute;
+            display: block;
+        }
+        .service-button span:nth-child(1) {
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg,transparent,#f40303);
+            animation: animate1 1s linear infinite;
+        }
+        @keyframes animate1 {
+            0% {
+                left: -100%;
+            }
+            50%,100% {
+                left: 100%;
+            }
+        }
+        .service-button span:nth-child(2) {
+            top: -100%;
+            right: 0;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(180deg,transparent,#f40303);
+            animation: animate2 1s linear infinite;
+            animation-delay: 0.25s;
+        }
+        @keyframes animate2 {
+            0% {
+                top: -100%;
+            }
+            50%,100% {
+                top: 100%;
+            }
+        }
+        .service-button span:nth-child(3) {
+            bottom: 0;
+            right: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(270deg,transparent,#f40303);
+            animation: animate3 1s linear infinite;
+            animation-delay: 0.5s;
+        }
+        @keyframes animate3 {
+            0% {
+                right: -100%;
+            }
+            50%,100% {
+                right: 100%;
+            }
+        }
+        .service-button span:nth-child(4) {
+            bottom: -100%;
+            left: 0;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(360deg,transparent,#f40303);
+            animation: animate4 1s linear infinite;
+            animation-delay: 0.75s;
+        }
+        @keyframes animate4 {
+            0% {
+                bottom: -100%;
+            }
+            50%,100% {
+                bottom: 100%;
+            }
+        }
+        #explosion-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #020108;
+            z-index: 100;
+            display: none; /* Hidden by default */
+        }
+        #explosion-canvas {
+            width: 100%;
+            height: 100%;
+        }
+        #explosion-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 3rem;
+            display: none; /* Hidden by default */
+        }
+        #close-explosion {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            font-size: 3rem;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+            display: none; /* Hidden by default */
+            z-index: 101;
+        }
     </style>
 </head>
 <body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="#" class="navbar-logo">
+                <img src="image.png" alt="Logo">
+            </a>
+            <div class="menu-icon">
+                <i class="fas fa-bars"></i>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-links">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-links">Services</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-links">About</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-links">Contact</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
     <canvas id="webgl-canvas"></canvas>
     <div id="scroll-container"></div>
     <div id="content">
@@ -121,7 +398,22 @@
         <div class="section" id="section1">
             <h1>OUR SERVICES</h1>
             <canvas class="particle-canvas" id="canvas1"></canvas>
-            <p>This is not just another laptop. It's the culmination of cutting-edge technology and design.</p>
+            <div class="button-container">
+                <a href="#" class="service-button" id="service-btn-1">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    SKILL AUGMENTATION
+                </a>
+                <a href="#" class="service-button" id="service-btn-2">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    MANAGED SERVICES
+                </a>
+            </div>
         </div>
         <div class="section" id="section2">
             <h1>OUR CLIENTS</h1>
@@ -133,6 +425,12 @@
             <canvas class="particle-canvas" id="canvas3"></canvas>
             <p>A glimpse into the future of computing.</p>
         </div>
+    </div>
+
+    <div id="explosion-container">
+        <a id="close-explosion">&times;</a>
+        <canvas id="explosion-canvas"></canvas>
+        <div id="explosion-text">Placeholder Text</div>
     </div>
 
     <script type="importmap">
@@ -147,6 +445,13 @@
     <script type="module" src="main.js"></script>
     
     <script>
+        const menu = document.querySelector('.menu-icon');
+        const navMenu = document.querySelector('.nav-menu');
+
+        menu.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+        });
+
         class ParticleText {
             constructor(canvasId, text, fontSize = '6rem') {
                 this.canvas = document.getElementById(canvasId);
@@ -302,43 +607,40 @@
                 this.x = this.system.canvas.width / 2 + Math.cos(angle) * distance;
                 this.y = this.system.canvas.height / 2 + Math.sin(angle) * distance;
                 
-                this.vx = (Math.random() - 0.5) * 15;
-                this.vy = (Math.random() - 0.5) * 15;
-                this.friction = 0.96;
-                this.attractionForce = 0.02;
-                // Add subtle wander force to keep particles alive
-                this.wanderForce = 0.01;
+                this.vx = (Math.random() - 0.5) * 12; // Balanced initial velocity
+                this.vy = (Math.random() - 0.5) * 12; // Balanced initial velocity
+                this.friction = 0.85; // Higher friction for faster settling
+                this.attractionForce = 0.10; // Higher attraction
+                this.wanderForce = 0; // Keep jiggling off
             }
             
             update() {
                 // Calculate distances
                 const dx = this.destX - this.x;
                 const dy = this.destY - this.y;
-                // const dist = Math.sqrt(dx * dx + dy * dy); // 'dist' is not used later
                 
-                // Mouse repulsion - apply FIRST and make it stronger
+                // Mouse repulsion
                 const mouseDx = this.x - this.system.mouse.x;
                 const mouseDy = this.y - this.system.mouse.y;
                 const mouseDist = Math.sqrt(mouseDx * mouseDx + mouseDy * mouseDy);
                 
                 if (mouseDist < 150 && mouseDist > 0) {
-                    const repelForce = (150 - mouseDist) / 150 * 6; // Increased force
+                    const repelForce = (150 - mouseDist) / 150 * 6;
                     this.vx += (mouseDx / mouseDist) * repelForce;
                     this.vy += (mouseDy / mouseDist) * repelForce;
                 }
                 
-                // Subtle wander when not near mouse (keeps particles alive)
+                // Subtle wander (disabled by setting wanderForce to 0)
                 if (mouseDist > 100) {
                     this.vx += (Math.random() - 0.5) * this.wanderForce;
                     this.vy += (Math.random() - 0.5) * this.wanderForce;
                 }
                 
-                // Attraction to destination - WEAKER when near mouse
+                // Attraction to destination
                 if (mouseDist > 80) {
                     this.vx += dx * this.attractionForce;
                     this.vy += dy * this.attractionForce;
                 } else {
-                    // Very weak attraction when mouse is close
                     this.vx += dx * this.attractionForce * 0.05;
                     this.vy += dy * this.attractionForce * 0.05;
                 }
@@ -348,7 +650,7 @@
                 this.vy *= this.friction;
                 
                 // Limit max velocity
-                const maxVel = 20; // Slightly higher for more dynamic movement
+                const maxVel = 15; // Balanced max velocity
                 const vel = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
                 if (vel > maxVel) {
                     this.vx = (this.vx / vel) * maxVel;
@@ -427,6 +729,207 @@
                 system.createParticles();
             });
         });
+    </script>
+
+    <script type="module">
+    import * as THREE from 'three';
+    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+    // Manages the full-screen explosion effect
+    class FullScreenExplosion {
+        constructor(canvas, textElement, closeButton) {
+            this.canvas = canvas;
+            this.textElement = textElement;
+            this.closeButton = closeButton;
+            this.time = 0;
+            this.isActive = false;
+        }
+
+        init() {
+            this.scene = new THREE.Scene();
+            this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            this.camera.position.z = 100;
+
+            this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true });
+            this.renderer.setPixelRatio(window.devicePixelRatio);
+            this.renderer.setSize(window.innerWidth, window.innerHeight);
+            this.renderer.setClearColor(0x020108);
+
+            const renderScene = new RenderPass(this.scene, this.camera);
+            const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+            bloomPass.threshold = 0;
+            bloomPass.strength = 1.2;
+            bloomPass.radius = 0.5;
+
+            this.composer = new EffectComposer(this.renderer);
+            this.composer.addPass(renderScene);
+            this.composer.addPass(bloomPass);
+
+            window.addEventListener('resize', this.onWindowResize.bind(this));
+            this.closeButton.addEventListener('click', this.close.bind(this));
+        }
+
+        createParticleSystem() {
+            const count = 10000;
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(count * 3);
+            const colors = new Float32Array(count * 3);
+            const basePositions = new Float32Array(count * 3);
+            const baseColors = new Float32Array(count * 3);
+
+            const colorRange = { hue: [0.6, 0.9], sat: [0.7, 1], light: [0.5, 0.7] };
+
+            for (let i = 0; i < count; i++) {
+                const i3 = i * 3;
+                
+                // Start particles from the center for the explosion
+                positions[i3] = 0;
+                positions[i3 + 1] = 0;
+                positions[i3 + 2] = 0;
+
+                // Target positions
+                const radius = 50 + Math.random() * 100;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+                basePositions[i3] = radius * Math.sin(phi) * Math.cos(theta);
+                basePositions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+                basePositions[i3 + 2] = radius * Math.cos(phi) - 50;
+
+                const dist = Math.random();
+                const hue = THREE.MathUtils.lerp(colorRange.hue[0], colorRange.hue[1], dist);
+                const sat = THREE.MathUtils.lerp(colorRange.sat[0], colorRange.sat[1], dist);
+                const light = THREE.MathUtils.lerp(colorRange.light[0], colorRange.light[1], dist);
+                const color = new THREE.Color().setHSL(hue, sat, light);
+                colors[i3] = baseColors[i3] = color.r;
+                colors[i3 + 1] = baseColors[i3 + 1] = color.g;
+                colors[i3 + 2] = baseColors[i3 + 2] = color.b;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            
+            const material = new THREE.PointsMaterial({
+                size: 0.3,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+                sizeAttenuation: true,
+            });
+
+            const points = new THREE.Points(geometry, material);
+            points.userData = {
+                velocities: new Float32Array(count * 3),
+                basePositions,
+            };
+            return points;
+        }
+
+        explode() {
+            if (this.isActive) return;
+            this.isActive = true;
+
+            document.getElementById('explosion-container').style.display = 'block';
+            document.querySelector('.button-container').style.display = 'none';
+
+            this.particles = this.createParticleSystem();
+            this.scene.add(this.particles);
+
+            const velocities = this.particles.userData.velocities;
+            for (let i = 0; i < velocities.length / 3; i++) {
+                const i3 = i * 3;
+                const p = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
+                velocities[i3] = p.x * (15 + Math.random() * 15);
+                velocities[i3 + 1] = p.y * (15 + Math.random() * 15);
+                velocities[i3 + 2] = p.z * (15 + Math.random() * 15);
+            }
+
+            this.animate();
+
+            setTimeout(() => {
+                this.textElement.style.display = 'block';
+                this.closeButton.style.display = 'block';
+            }, 2000);
+        }
+
+        close() {
+            this.isActive = false;
+            document.getElementById('explosion-container').style.display = 'none';
+            this.textElement.style.display = 'none';
+            this.closeButton.style.display = 'none';
+            document.querySelector('.button-container').style.display = 'flex';
+            
+            if (this.particles) {
+                this.scene.remove(this.particles);
+                this.particles.geometry.dispose();
+                this.particles.material.dispose();
+                this.particles = null;
+            }
+        }
+
+        updateParticles() {
+            if (!this.particles) return;
+
+            const positions = this.particles.geometry.attributes.position.array;
+            const velocities = this.particles.userData.velocities;
+            const basePositions = this.particles.userData.basePositions;
+            
+            for (let i = 0; i < positions.length / 3; i++) {
+                const i3 = i * 3;
+                
+                const returnForce = 0.02;
+                velocities[i3] += (basePositions[i3] - positions[i3]) * returnForce;
+                velocities[i3 + 1] += (basePositions[i3 + 1] - positions[i3 + 1]) * returnForce;
+                velocities[i3 + 2] += (basePositions[i3 + 2] - positions[i3 + 2]) * returnForce;
+
+                const damping = 0.96;
+                velocities[i3] *= damping;
+                velocities[i3 + 1] *= damping;
+                velocities[i3 + 2] *= damping;
+
+                positions[i3] += velocities[i3];
+                positions[i3 + 1] += velocities[i3 + 1];
+                positions[i3 + 2] += velocities[i3 + 2];
+            }
+            this.particles.geometry.attributes.position.needsUpdate = true;
+        }
+
+        animate() {
+            if (!this.isActive) return;
+            requestAnimationFrame(this.animate.bind(this));
+            this.time += 0.01;
+            this.updateParticles();
+            this.composer.render();
+        }
+
+        onWindowResize() {
+            this.camera.aspect = window.innerWidth / window.innerHeight;
+            this.camera.updateProjectionMatrix();
+            this.renderer.setSize(window.innerWidth, window.innerHeight);
+            this.composer.setSize(window.innerWidth, window.innerHeight);
+        }
+    }
+
+    // --- Main script ---
+    const explosionCanvas = document.getElementById('explosion-canvas');
+    const explosionText = document.getElementById('explosion-text');
+    const closeExplosionButton = document.getElementById('close-explosion');
+    const explosionManager = new FullScreenExplosion(explosionCanvas, explosionText, closeExplosionButton);
+    
+    explosionManager.init();
+
+    document.getElementById('service-btn-1').addEventListener('click', (e) => {
+        e.preventDefault();
+        explosionManager.explode();
+    });
+    document.getElementById('service-btn-2').addEventListener('click', (e) => {
+        e.preventDefault();
+        explosionManager.explode();
+    });
+
     </script>
 </body>
 </html>

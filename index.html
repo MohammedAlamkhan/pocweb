@@ -360,6 +360,152 @@
             display: none; /* Hidden by default */
             z-index: 101;
         }
+
+        .section h1.visible-heading {
+            visibility: visible;
+            position: relative;
+            margin-bottom: 30px;
+            color: #fff;
+        }
+
+        /* Contact Form Styles */
+        .contact-form-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 600px;
+            margin-top: 200px;
+            pointer-events: auto;
+        }
+
+        #contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .form-group {
+            position: relative;
+            overflow: hidden;
+            border-radius: 5px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 5px;
+            outline: none;
+            background: #210100;
+            font-family: 'Roboto Mono', monospace;
+            transition: border-color 0.3s;
+        }
+
+        .form-group label {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-size: 16px;
+            color: #888;
+            pointer-events: none;
+            transition: .3s;
+        }
+
+        .form-group input:focus ~ label,
+        .form-group input:not(:placeholder-shown) ~ label,
+        .form-group textarea:focus ~ label,
+        .form-group textarea:not(:placeholder-shown) ~ label {
+            top: 1px;
+            left: 10px;
+            color: #f40303;
+            font-size: 12px;
+            background-color: #00011d;
+            padding: 0 5px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #f40303;
+            box-shadow: 0 0 8px rgba(244, 3, 3, 0.6);
+        }
+
+        .contact-form-container .service-button {
+            width: 100%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            padding: 15px 30px;
+        }
+
+        .contact-form-container .service-button:hover {
+            background: #f40303;
+            color: #050801;
+            box-shadow: 0 0 5px #f40303,
+                        0 0 25px #f40303,
+                        0 0 50px #f40303,
+                        0 0 200px #f40303;
+            -webkit-box-reflect:below 1px linear-gradient(transparent, #0005);
+        }
+
+        .form-group span {
+            position: absolute;
+            display: block;
+        }
+
+        .form-group span:nth-of-type(1) {
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg,transparent,#f40303);
+        }
+        .form-group input:focus ~ span:nth-of-type(1),
+        .form-group textarea:focus ~ span:nth-of-type(1) {
+            animation: animate1 1s linear infinite;
+        }
+
+        .form-group span:nth-of-type(2) {
+            top: -100%;
+            right: 0;
+            width: 1px;
+            height: 100%;
+            background: linear-gradient(180deg,transparent,#f40303);
+        }
+        .form-group input:focus ~ span:nth-of-type(2),
+        .form-group textarea:focus ~ span:nth-of-type(2) {
+            animation: animate2 1s linear infinite;
+            animation-delay: 0.25s;
+        }
+
+        .form-group span:nth-of-type(3) {
+            bottom: 0;
+            right: -100%;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(270deg,transparent,#f40303);
+        }
+        .form-group input:focus ~ span:nth-of-type(3),
+        .form-group textarea:focus ~ span:nth-of-type(3) {
+            animation: animate3 1s linear infinite;
+            animation-delay: 0.5s;
+        }
+
+        .form-group span:nth-of-type(4) {
+            bottom: -100%;
+            left: 0;
+            width: 1px;
+            height: 100%;
+            background: linear-gradient(360deg,transparent,#f40303);
+        }
+        .form-group input:focus ~ span:nth-of-type(4),
+        .form-group textarea:focus ~ span:nth-of-type(4) {
+            animation: animate4 1s linear infinite;
+            animation-delay: 0.75s;
+        }
     </style>
 </head>
 <body>
@@ -425,7 +571,42 @@
         <div class="section" id="section4">
             <h1>CONTACT US</h1>
             <canvas class="particle-canvas" id="canvas4"></canvas>
-            <p>A glimpse into the future of computing.</p>
+            <div class="contact-form-container">
+                <form id="contact-form">
+                    <div class="form-group">
+                        <input type="text" id="fullName" name="fullName" required placeholder=" ">
+                        <label for="fullName">Full Name</label>
+                        <span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="company" name="company" required placeholder=" ">
+                        <label for="company">Company/Project</label>
+                        <span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="email" name="email" required placeholder=" ">
+                        <label for="email">Email Id</label>
+                        <span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" id="phone" name="phone" placeholder=" ">
+                        <label for="phone">Phone Number</label>
+                        <span></span><span></span><span></span><span></span>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="message" name="message" rows="3" required placeholder=" "></textarea>
+                        <label for="message">Message</label>
+                        <span></span><span></span><span></span><span></span>
+                    </div>
+                    <button type="submit" class="service-button" id="submit-btn">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        Submit Details
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -1146,7 +1327,7 @@
         }
 
         class ParticleText {
-            constructor(canvasId, text, fontSize = '6rem') {
+            constructor(canvasId, text, textY = null) {
                 this.canvas = document.getElementById(canvasId);
                 if (!this.canvas) {
                     console.error(`Canvas ${canvasId} not found`);
@@ -1155,7 +1336,7 @@
                 
                 this.ctx = this.canvas.getContext('2d');
                 this.text = text;
-                this.fontSize = fontSize;
+                this.textY = textY;
                 this.particles = [];
                 this.textPositions = [];
                 this.mouse = { x: -9999, y: -9999 };
@@ -1210,7 +1391,7 @@
                 tempCtx.fillStyle = '#ffffff';
                 
                 const centerX = tempCanvas.width / 2;
-                const centerY = tempCanvas.height / 2;
+                const centerY = this.textY !== null ? this.textY : tempCanvas.height / 2;
                 tempCtx.fillText(this.text, centerX, centerY);
                 
                 const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
@@ -1392,9 +1573,14 @@
                     const system = new SolarSystem(canvasId, text);
                     particleSystems.push(system);
                     console.log(`Created solar system for: "${text}"`);
+                } else if (canvasId === 'canvas4') {
+                    const text = h1 ? h1.textContent.trim() : '';
+                    const system = new ParticleText(canvasId, text, 150); // Position at top
+                    particleSystems.push(system);
+                    console.log(`Created system for: "${text}"`);
                 } else {
                     const text = h1 ? h1.textContent.trim() : '';
-                    const system = new ParticleText(canvasId, text);
+                    const system = new ParticleText(canvasId, text); // Default center
                     particleSystems.push(system);
                     console.log(`Created system for: "${text}"`);
                 }
@@ -1645,6 +1831,30 @@
         explosionManager.explode();
     });
 
+    document.getElementById('contact-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const fullName = document.getElementById('fullName').value;
+        const company = document.getElementById('company').value;
+        const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
+        const message = document.getElementById('message').value;
+
+        const subject = `Contact Form Submission from ${fullName}`;
+        const body = `
+            Full Name: ${fullName}
+            Company/Project: ${company}
+            Email: ${email}
+            Phone: ${phone}
+            
+            Message:
+            ${message}
+        `;
+
+        const mailtoLink = `mailto:abcd@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+        window.location.href = mailtoLink;
+    });
     </script>
 </body>
 </html>

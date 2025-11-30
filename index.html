@@ -218,7 +218,7 @@
             max-width: 600px;
             margin: 2em auto 0;
             position: absolute;
-            bottom: 20%;
+            bottom: 15%;
             left: 50%;
             transform: translateX(-50%);
             z-index: 10;
@@ -600,6 +600,9 @@
                 this.initialized = false;
                 this.headingPositions = [];
 
+                this.animationState = 'forming'; // forming, fading_in_logos, logos_visible
+                this.logoFadeInProgress = 0;
+
                 this.logoCount = 13;
                 this.logoSize = 100;
                 this.loadedLogos = 0;
@@ -782,6 +785,8 @@
                 this.active = active;
                 if (active) {
                     this.particles.forEach(p => p.reset());
+                    this.animationState = 'forming';
+                    this.logoFadeInProgress = 0;
                 }
             }
 
@@ -802,6 +807,19 @@
                     // Update all particles
                     this.particles.forEach(p => p.update());
 
+                    // Check if hexagons have finished forming
+                    if (this.animationState === 'forming') {
+                        const allHexParticlesHome = this.hexagonParticles.every(p => {
+                            const dx = p.destX - p.x;
+                            const dy = p.destY - p.y;
+                            return (dx * dx + dy * dy) < 500;
+                        });
+
+                        if (allHexParticlesHome) {
+                            this.animationState = 'fading_in_logos';
+                        }
+                    }
+
                     // Draw heading particles
                     this.ctx.fillStyle = '#ff0000';
                     this.ctx.beginPath();
@@ -812,11 +830,21 @@
                     this.ctx.fill();
 
                     // Draw logos and their backgrounds
-                    if (this.loadedLogos >= this.logoCount) {
+                    if ((this.animationState === 'fading_in_logos' || this.animationState === 'logos_visible') && this.loadedLogos >= this.logoCount) {
+                        if (this.animationState === 'fading_in_logos') {
+                            this.logoFadeInProgress += 0.02; // Fade-in speed
+                            if (this.logoFadeInProgress >= 1.0) {
+                                this.logoFadeInProgress = 1.0;
+                                this.animationState = 'logos_visible';
+                            }
+                        }
+
                         let logoIndex = 0;
                         this.hexagons.forEach(hex => {
                             if (hex.hasLogo && logoIndex < this.logos.length) {
                                 this.ctx.save();
+                                this.ctx.globalAlpha = this.logoFadeInProgress;
+
                                 this.ctx.beginPath();
                                 for (let i = 0; i < 6; i++) {
                                     const angle_deg = 60 * i - 30;

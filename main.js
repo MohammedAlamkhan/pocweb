@@ -8,6 +8,9 @@ let plane;
 const mouse = new THREE.Vector2();
 const targetRotation = new THREE.Vector2();
 
+// --- Scene Group ---
+let backgroundGroup;
+
 // --- Particle System Variables ---
 let particles, particleGeometry, particleVelocities;
 const particleCount = 5000;
@@ -19,6 +22,8 @@ let scrollUpdateRequest = false;
 function init() {
     // Scene
     scene = new THREE.Scene();
+    backgroundGroup = new THREE.Group();
+    scene.add(backgroundGroup);
 
     // Camera
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -64,10 +69,10 @@ function init() {
     const planeGeometry = new THREE.PlaneGeometry(viewWidth * zoom, viewHeight * zoom);
     const videoMaterial = new THREE.MeshBasicMaterial({ 
         map: videoTexture,
-        color: 0x4e1212 // Set color to a gray to reduce brightness
+        color: 0x4e1212
     });
     plane = new THREE.Mesh(planeGeometry, videoMaterial);
-    scene.add(plane);
+    backgroundGroup.add(plane); // Add to group
     
     video.load();
     video.addEventListener('loadedmetadata', () => {
@@ -112,7 +117,7 @@ function init() {
     });
 
     particles = new THREE.Points(particleGeometry, particleMaterial);
-    scene.add(particles);
+    backgroundGroup.add(particles); // Add to group
 
     // Start animation loop
     animate();
@@ -205,21 +210,21 @@ function animate() {
             if (positions[i3] < -boundaryX) positions[i3] = boundaryX;
 
             if (positions[i3 + 1] > boundaryY) positions[i3 + 1] = -boundaryY;
-            if (positions[i3 + 1] < -boundaryY) positions[i3] = boundaryY;
+            if (positions[i3 + 1] < -boundaryY) positions[i3 + 1] = boundaryY;
 
             if (positions[i3 + 2] > boundaryZ) positions[i3 + 2] = -boundaryZ;
-            if (positions[i3 + 2] < -boundaryZ) positions[i3] = boundaryZ;
+            if (positions[i3 + 2] < -boundaryZ) positions[i3 + 2] = boundaryZ;
         }
         particleGeometry.attributes.position.needsUpdate = true;
     }
 
-    // --- Apply Tilt Effect ---
+    // --- Apply Tilt Effect to Group ---
     targetRotation.x = mouse.y * 0.08;
     targetRotation.y = -mouse.x * 0.08;
 
-    if (plane) {
-        plane.rotation.x += 0.05 * (targetRotation.x - plane.rotation.x);
-        plane.rotation.y += 0.05 * (targetRotation.y - plane.rotation.y);
+    if (backgroundGroup) {
+        backgroundGroup.rotation.x += 0.05 * (targetRotation.x - backgroundGroup.rotation.x);
+        backgroundGroup.rotation.y += 0.05 * (targetRotation.y - backgroundGroup.rotation.y);
     }
 
     renderer.render(scene, camera);

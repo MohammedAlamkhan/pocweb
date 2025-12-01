@@ -535,6 +535,32 @@
             font-size: xx-large;
             color: #f78a8a;
         }
+        .typewriter-subheading {
+            font-family: 'Digital-7', 'Roboto Mono', monospace;
+            font-size: x-large; /* Slightly smaller than xx-large */
+            color: #f40303; /* A distinct color, or inherit from parent */
+            text-align: center;
+            position: absolute; /* To position it at the bottom */
+            bottom: 10%; /* Adjust as needed */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            z-index: 10;
+        }
+        .typewriter-subheading::after {
+            content: '|';
+            color: #f40303;
+            animation: blink 1s step-end infinite;
+            font-weight: normal;
+            font-size: inherit; /* Inherit from subheading */
+        }
+        #careers-button {
+            position: absolute;
+            bottom: 15%; /* Adjust as needed, below the subheading */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
     </style>
 </head>
 <body>
@@ -596,6 +622,14 @@
         <div class="section" id="section3">
             <h1>Ideal Spot for You</h1>
             <canvas class="particle-canvas" id="canvas3"></canvas>
+            <p id="section3-typewriter" class="typewriter-subheading"></p>
+            <a href="./careers.html" class="service-button" id="careers-button">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                CURRENT OPENINGS
+            </a>
         </div>
         <div class="section" id="section4">
             <h1>CONTACT US</h1>
@@ -1337,14 +1371,36 @@
                             const angle = this.clock * 0.5 + (index * (Math.PI * 2 / this.innerLogos.length));
                             const x = centerX + Math.cos(angle) * innerLogoOrbitRadius;
                             const y = centerY + Math.sin(angle) * innerLogoOrbitRadius;
-                            this.ctx.drawImage(logo, x - logoSize / 2, y - logoSize / 2, logoSize, logoSize);
+
+                            const logoAspectRatio = logo.width / logo.height;
+                            let drawWidth, drawHeight;
+
+                            if (logoAspectRatio > 1) { // Wider than tall
+                                drawWidth = logoSize;
+                                drawHeight = logoSize / logoAspectRatio;
+                            } else { // Taller than wide, or square
+                                drawHeight = logoSize;
+                                drawWidth = logoSize * logoAspectRatio;
+                            }
+                            this.ctx.drawImage(logo, x - drawWidth / 2, y - drawHeight / 2, drawWidth, drawHeight);
                         });
 
                         this.outerLogos.forEach((logo, index) => {
                             const angle = this.clock * 0.3 + (index * (Math.PI * 2 / this.outerLogos.length));
                             const x = centerX + Math.cos(angle) * outerLogoOrbitRadius;
                             const y = centerY + Math.sin(angle) * outerLogoOrbitRadius;
-                            this.ctx.drawImage(logo, x - logoSize / 2, y - logoSize / 2, logoSize, logoSize);
+
+                            const logoAspectRatio = logo.width / logo.height;
+                            let drawWidth, drawHeight;
+
+                            if (logoAspectRatio > 1) { // Wider than tall
+                                drawWidth = logoSize;
+                                drawHeight = logoSize / logoAspectRatio;
+                            } else { // Taller than wide, or square
+                                drawHeight = logoSize;
+                                drawWidth = logoSize * logoAspectRatio;
+                            }
+                            this.ctx.drawImage(logo, x - drawWidth / 2, y - drawHeight / 2, drawWidth, drawHeight);
                         });
 
                         this.ctx.restore();
@@ -1655,6 +1711,55 @@
             if (particleSystems.length > 0) {
                 activeSystem = particleSystems[0];
                 activeSystem.setActive(true);
+            }
+
+            // New typewriter logic for section3
+            const section3Typewriter = document.getElementById('section3-typewriter');
+            if (section3Typewriter) {
+                const texts = ["WE CELEBRATE DIVERSE PERSPETIVES AND SKILLS"];
+                let textIndex = 0;
+                let charIndex = 0;
+                let isDeleting = false;
+                const typeSpeed = 100;
+                const deleteSpeed = 50;
+                const delayBetweenTexts = 2000;
+
+                const typeSection3 = () => {
+                    const currentText = texts[textIndex];
+                    let timeout;
+
+                    if (isDeleting) {
+                        section3Typewriter.textContent = currentText.substring(0, charIndex - 1);
+                        charIndex--;
+                        timeout = deleteSpeed;
+                    } else {
+                        section3Typewriter.textContent = currentText.substring(0, charIndex + 1);
+                        charIndex++;
+                        timeout = typeSpeed;
+                    }
+
+                    if (!isDeleting && charIndex === currentText.length) {
+                        isDeleting = true;
+                        timeout = delayBetweenTexts;
+                    } else if (isDeleting && charIndex === 0) {
+                        isDeleting = false;
+                        textIndex = (textIndex + 1) % texts.length;
+                        timeout = 500;
+                    }
+
+                    setTimeout(typeSection3, timeout);
+                }
+                // Only start if section3 is visible
+                const section3 = document.getElementById('section3');
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            typeSection3();
+                            observer.unobserve(section3); // Only run once
+                        }
+                    });
+                }, { threshold: 0.5 }); // Trigger when 50% of section3 is visible
+                observer.observe(section3);
             }
         });
         

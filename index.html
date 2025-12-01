@@ -407,7 +407,7 @@
             border: 1px solid #555;
             border-radius: 5px;
             outline: none;
-            background: #210100;
+            background: rgba(255, 0, 0, 0.2);
             font-family: 'Roboto Mono', monospace;
             transition: border-color 0.3s;
         }
@@ -1107,11 +1107,8 @@
                                 }
                                 this.ctx.closePath();
 
-                                // Create and apply gradient background
-                                const gradient = this.ctx.createRadialGradient(hex.x, hex.y, 0, hex.x, hex.y, hex.size);
-                                gradient.addColorStop(0, '#555');
-                                gradient.addColorStop(1, '#333');
-                                this.ctx.fillStyle = gradient;
+                                // Apply semi-transparent red background
+                                this.ctx.fillStyle = 'rgba(255, 0, 0, 0.2)'; // Semi-transparent red
                                 this.ctx.fill();
 
                                 this.ctx.clip();

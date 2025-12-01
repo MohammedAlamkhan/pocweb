@@ -619,6 +619,88 @@
             height: 150px;
             object-fit: contain;
         }
+
+        /* --- Our Journey Section --- */
+        .journey-section-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .journey-left {
+            width: 50%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .journey-right {
+            width: 50%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #journey-rocket {
+            width: 50%;
+            max-width: 400px;
+            animation: shake 0.8s infinite;
+            pointer-events: auto;
+        }
+
+        .journey-subheading {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.5rem;
+            color: #f78a8a;
+            margin-top: 20px;
+            height: 100px; /* Fixed height to prevent layout shift */
+        }
+
+        .journey-subheading::after {
+            content: '|';
+            color: #f40303;
+            animation: blink 1s step-end infinite;
+            font-weight: normal;
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(-2px, 2px) rotate(-1deg);
+            }
+            50% {
+                transform: translate(2px, -2px) rotate(1deg);
+            }
+            75% {
+                transform: translate(-1px, 1px) rotate(0.5deg);
+            }
+        }
+         @media screen and (max-width: 768px) {
+            .journey-section-container {
+                flex-direction: column;
+            }
+            .journey-left, .journey-right {
+                width: 100%;
+                height: 50%;
+            }
+            #journey-rocket {
+                width: 30%;
+                min-width: 150px;
+            }
+            .journey-subheading {
+                font-size: 1.2rem;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -647,7 +729,7 @@
         </div>
     </nav>
     <canvas id="webgl-canvas"></canvas>
-    <div id="scroll-container"></div>
+    <div id="scroll-container" style="height: 800vh;"></div>
     <div id="content">
         <div class="section visible" id="section0">
             <canvas class="particle-canvas" id="canvas0"></canvas>
@@ -668,33 +750,70 @@
                 </div>
             </div>
         </div>
+
+        <!-- Our Journey Section 1 -->
         <div class="section" id="section1">
-            <h1>OUR SERVICES</h1>
-            <canvas class="particle-canvas" id="canvas1"></canvas>
-            <div class="button-container">
-                <a href="#" class="service-button" id="service-btn-1">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    SKILL AUGMENTATION
-                </a>
-                <a href="#" class="service-button" id="service-btn-2">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    MANAGED SERVICES
-                </a>
+            <div class="journey-section-container">
+                <div class="journey-left">
+                    <h1>2021</h1>
+                    <canvas class="particle-canvas" id="canvas1"></canvas>
+                    <p class="journey-subheading" id="journey-subheading-1"></p>
+                </div>
+                <div class="journey-right">
+                    <img src="rocket.webp" id="journey-rocket" alt="Shaking Rocket">
+                </div>
             </div>
         </div>
+
+        <!-- Our Journey Section 2 -->
         <div class="section" id="section2">
-            <h1>OUR CLIENTS</h1>
-            <canvas class="particle-canvas" id="canvas2"></canvas>
+            <div class="journey-section-container">
+                <div class="journey-left">
+                    <h1>2022</h1>
+                    <canvas class="particle-canvas" id="canvas2"></canvas>
+                    <p class="journey-subheading" id="journey-subheading-2"></p>
+                </div>
+                <div class="journey-right">
+                    <img src="rocket.webp" id="journey-rocket" alt="Shaking Rocket">
+                </div>
+            </div>
         </div>
+
+        <!-- Our Journey Section 3 -->
         <div class="section" id="section3">
+            <div class="journey-section-container">
+                <div class="journey-left">
+                    <h1>2023</h1>
+                    <canvas class="particle-canvas" id="canvas3"></canvas>
+                    <p class="journey-subheading" id="journey-subheading-3"></p>
+                </div>
+                <div class="journey-right">
+                    <img src="rocket.webp" id="journey-rocket" alt="Shaking Rocket">
+                </div>
+            </div>
+        </div>
+
+        <!-- Our Journey Section 4 -->
+        <div class="section" id="section4">
+            <div class="journey-section-container">
+                <div class="journey-left">
+                    <h1>2024</h1>
+                    <canvas class="particle-canvas" id="canvas4"></canvas>
+                    <p class="journey-subheading" id="journey-subheading-4"></p>
+                </div>
+                <div class="journey-right">
+                    <img src="rocket.webp" id="journey-rocket" alt="Shaking Rocket">
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="section5">
+            <h1>OUR CLIENTS</h1>
+            <canvas class="particle-canvas" id="canvas5"></canvas>
+        </div>
+        <div class="section" id="section6">
             <h1>Ideal Spot for You</h1>
-            <canvas class="particle-canvas" id="canvas3"></canvas>
+            <canvas class="particle-canvas" id="canvas6"></canvas>
             <p id="section3-typewriter" class="typewriter-subheading"></p>
             <a href="./careers.html" class="service-button" id="careers-button">
                 <span></span>
@@ -704,9 +823,9 @@
                 CURRENT OPENINGS
             </a>
         </div>
-        <div class="section" id="section4">
+        <div class="section" id="section7">
             <h1>CONTACT US</h1>
-            <canvas class="particle-canvas" id="canvas4"></canvas>
+            <canvas class="particle-canvas" id="canvas7"></canvas>
             <div class="contact-form-container">
                 <form id="contact-form">
                     <div class="form-group">
@@ -764,6 +883,7 @@
     <script type="module" src="main.js"></script>
     
     <script>
+        <script>
         const menu = document.querySelector('.menu-icon');
         const navMenu = document.querySelector('.nav-menu');
 
@@ -817,9 +937,8 @@
 
                 const aspectRatio = this.image.width / this.image.height;
                 let drawWidth, drawHeight;
-                const scaleFactor = 0.8; // New scaling factor
+                const scaleFactor = 0.8; 
 
-                // Calculate dimensions to fit within 75% of the canvas
                 const targetWidth = this.canvas.width * scaleFactor;
                 const targetHeight = this.canvas.height * scaleFactor;
 
@@ -843,14 +962,14 @@
                 const data = imageData.data;
 
                 this.imagePositions = [];
-                const step = 4; // Sample every 'step' pixels
+                const step = 4; 
 
                 for (let y = 0; y < tempCanvas.height; y += step) {
                     for (let x = 0; x < tempCanvas.width; x += step) {
                         const index = (y * tempCanvas.width + x) * 4;
                         const alpha = data[index + 3];
 
-                        if (alpha > 128) { // Only consider non-transparent pixels
+                        if (alpha > 128) { 
                             this.imagePositions.push({ x, y });
                         }
                     }
@@ -887,7 +1006,7 @@
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
                 if (this.active && this.particles.length > 0) {
-                    this.ctx.fillStyle = '#ff0000'; // Particles color
+                    this.ctx.fillStyle = '#ff0000'; 
                     this.ctx.beginPath();
                     for (let i = 0; i < this.particles.length; i++) {
                         this.particles[i].update();
@@ -921,7 +1040,7 @@
                 this.initialized = false;
                 this.headingPositions = [];
 
-                this.animationState = 'forming'; // forming, fading_in_logos, logos_visible
+                this.animationState = 'forming'; 
                 this.logoFadeInProgress = 0;
 
                 this.logoCount = 13;
@@ -1000,7 +1119,7 @@
 
             calculateHexagonLayout() {
                 const hexSize = 80;
-                const gridRadius = 3; // creates a hexagon of hexagons
+                const gridRadius = 3; 
                 const centerX = this.canvas.width / 2;
                 const centerY = this.canvas.height / 2;
 
@@ -1014,7 +1133,6 @@
                         const x = centerX + hexSize * Math.sqrt(3) * (q + r/2);
                         const y = centerY + hexSize * 3/2 * r;
 
-                        // Check if hexagon overlaps with heading text area
                         const headingBox = {
                             left: centerX - 300,
                             right: centerX + 300,
@@ -1025,16 +1143,13 @@
                             continue;
                         }
 
-                        // Calculate distance from the center of the canvas (where the heading is)
                         const dist = Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2));
                         allPossibleHexagons.push({ x, y, size: hexSize, hasLogo: false, distance: dist });
                     }
                 }
 
-                // Sort hexagons by distance to the center
                 allPossibleHexagons.sort((a, b) => a.distance - b.distance);
 
-                // Assign logos to the closest hexagons
                 for (let i = 0; i < allPossibleHexagons.length; i++) {
                     const hex = allPossibleHexagons[i];
                     if (i < this.logoCount) {
@@ -1055,18 +1170,16 @@
                         tempCanvas.width = img.width;
                         tempCanvas.height = img.height;
 
-                        // Draw the original logo
                         tempCtx.drawImage(img, 0, 0);
 
-                        // Use 'source-in' to fill the logo shape with white
                         tempCtx.globalCompositeOperation = 'source-in';
                         tempCtx.fillStyle = 'white';
                         tempCtx.fillRect(0, 0, img.width, img.height);
 
-                        this.logos[logoIndex] = tempCanvas; // Replace image with canvas
+                        this.logos[logoIndex] = tempCanvas; 
                         this.loadedLogos++;
                     };
-                    this.logos.push(img); // Push original image, it will be replaced
+                    this.logos.push(img); 
                 }
             }
 
@@ -1106,8 +1219,6 @@
                 this.active = active;
                 if (active) {
                     this.particles.forEach(p => p.reset());
-                    this.animationState = 'forming';
-                    this.logoFadeInProgress = 0;
                 }
             }
 
@@ -1125,10 +1236,8 @@
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
                 if (this.active) {
-                    // Update all particles
                     this.particles.forEach(p => p.update());
 
-                    // Check if hexagons have finished forming
                     if (this.animationState === 'forming') {
                         const allHexParticlesHome = this.hexagonParticles.every(p => {
                             const dx = p.destX - p.x;
@@ -1141,7 +1250,6 @@
                         }
                     }
 
-                    // Draw heading particles
                     this.ctx.fillStyle = '#ff0000';
                     this.ctx.beginPath();
                     this.headingParticles.forEach(p => {
@@ -1150,10 +1258,9 @@
                     });
                     this.ctx.fill();
 
-                    // Draw logos and their backgrounds
                     if ((this.animationState === 'fading_in_logos' || this.animationState === 'logos_visible') && this.loadedLogos >= this.logoCount) {
                         if (this.animationState === 'fading_in_logos') {
-                            this.logoFadeInProgress += 0.02; // Fade-in speed
+                            this.logoFadeInProgress += 0.02; 
                             if (this.logoFadeInProgress >= 1.0) {
                                 this.logoFadeInProgress = 1.0;
                                 this.animationState = 'logos_visible';
@@ -1180,21 +1287,20 @@
                                 }
                                 this.ctx.closePath();
 
-                                // Apply semi-transparent red background
-                                this.ctx.fillStyle = 'rgba(255, 0, 0, 0.2)'; // Semi-transparent red
+                                this.ctx.fillStyle = 'rgba(255, 0, 0, 0.2)'; 
                                 this.ctx.fill();
 
                                 this.ctx.clip();
 
                                 const logo = this.logos[logoIndex];
                                 const logoAspectRatio = logo.width / logo.height;
-                                const maxDrawSize = hex.size * 1.5; // To have some padding
+                                const maxDrawSize = hex.size * 1.5; 
                                 let drawWidth, drawHeight;
 
-                                if (logoAspectRatio > 1) { // wider
+                                if (logoAspectRatio > 1) { 
                                     drawWidth = maxDrawSize;
                                     drawHeight = maxDrawSize / logoAspectRatio;
-                                } else { // taller or square
+                                } else { 
                                     drawHeight = maxDrawSize;
                                     drawWidth = maxDrawSize * logoAspectRatio;
                                 }
@@ -1207,7 +1313,6 @@
                         });
                     }
 
-                    // Draw hexagon border particles
                     this.ctx.fillStyle = '#ff0000';
                     this.ctx.beginPath();
                     this.hexagonParticles.forEach(p => {
@@ -1241,7 +1346,7 @@
                 this.headingPositions = [];
                 this.clock = 0;
 
-                this.animationState = 'forming'; // forming, fading_in_logos, logos_visible
+                this.animationState = 'forming'; 
                 this.logoFadeInProgress = 0;
 
                 this.innerRingPaths = ["innerRing/1.png", "innerRing/2.png", "innerRing/3.png", "innerRing/4.png", "innerRing/5.png", "innerRing/6.png", "innerRing/7.png", "innerRing/8.png"];
@@ -1291,7 +1396,7 @@
                 tempCtx.fillStyle = '#ffffff';
 
                 const centerX = tempCanvas.width / 2;
-                const centerY = 150; // Position heading higher
+                const centerY = 150; 
                 tempCtx.fillText(this.text, centerX, centerY);
 
                 const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
@@ -1340,7 +1445,6 @@
                 const centerY = this.canvas.height / 2;
                 const scale = 1.5;
 
-                // Sun particles
                 const sunRadius = 50 * scale;
                 for (let i = 0; i < 3000; i++) {
                     const angle = Math.random() * Math.PI * 2;
@@ -1350,7 +1454,6 @@
                     this.sunAndOrbitParticles.push(new Particle(x, y, 1.5, this));
                 }
 
-                // Orbit particles
                 const allOrbitRadii = [100, 140, 180, 220, 260, 300, 340].map(r => r * scale);
                 allOrbitRadii.forEach(orbitRadius => {
                     for (let i = 0; i < 360; i += 2) {
@@ -1361,7 +1464,6 @@
                     }
                 });
                 
-                // Heading particles
                 this.headingPositions.forEach(pos => {
                     this.headingParticles.push(new Particle(pos.x, pos.y, 1.5, this));
                 });
@@ -1408,7 +1510,6 @@
                         }
                     }
 
-                    // Draw all particles
                     this.ctx.fillStyle = '#ff0000';
                     this.ctx.beginPath();
                     this.particles.forEach(p => {
@@ -1417,10 +1518,9 @@
                     });
                     this.ctx.fill();
 
-                    // Draw orbiting logos
                     if (this.animationState === 'fading_in_logos' || this.animationState === 'logos_visible') {
                         if (this.animationState === 'fading_in_logos') {
-                            this.logoFadeInProgress += 0.05; // Faster fade-in
+                            this.logoFadeInProgress += 0.05; 
                             if (this.logoFadeInProgress >= 1.0) {
                                 this.logoFadeInProgress = 1.0;
                                 this.animationState = 'logos_visible';
@@ -1445,10 +1545,10 @@
                             const logoAspectRatio = logo.width / logo.height;
                             let drawWidth, drawHeight;
 
-                            if (logoAspectRatio > 1) { // Wider than tall
+                            if (logoAspectRatio > 1) { 
                                 drawWidth = logoSize;
                                 drawHeight = logoSize / logoAspectRatio;
-                            } else { // Taller than wide, or square
+                            } else { 
                                 drawHeight = logoSize;
                                 drawWidth = logoSize * logoAspectRatio;
                             }
@@ -1463,10 +1563,10 @@
                             const logoAspectRatio = logo.width / logo.height;
                             let drawWidth, drawHeight;
 
-                            if (logoAspectRatio > 1) { // Wider than tall
+                            if (logoAspectRatio > 1) { 
                                 drawWidth = logoSize;
                                 drawHeight = logoSize / logoAspectRatio;
-                            } else { // Taller than wide, or square
+                            } else { 
                                 drawHeight = logoSize;
                                 drawWidth = logoSize * logoAspectRatio;
                             }
@@ -1545,8 +1645,8 @@
                 tempCtx.textBaseline = 'middle';
                 tempCtx.fillStyle = '#ffffff';
                 
-                const centerX = tempCanvas.width / 2;
-                const centerY = this.textY !== null ? this.textY : tempCanvas.height / 2;
+                const centerX = (this.canvas.width / 2) / 2;
+                const centerY = this.textY !== null ? this.textY : this.canvas.height / 2;
                 tempCtx.fillText(this.text, centerX, centerY);
                 
                 const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
@@ -1604,7 +1704,6 @@
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
                 
                 if (this.active && this.particles.length > 0) {
-                    // Changed fillStyle to red
                     this.ctx.fillStyle = '#ff0000'; 
                     
                     this.ctx.beginPath();
@@ -1637,19 +1736,17 @@
                 this.x = this.system.canvas.width / 2 + Math.cos(angle) * distance;
                 this.y = this.system.canvas.height / 2 + Math.sin(angle) * distance;
                 
-                this.vx = (Math.random() - 0.5) * 12; // Balanced initial velocity
-                this.vy = (Math.random() - 0.5) * 12; // Balanced initial velocity
-                this.friction = 0.85; // Higher friction for faster settling
-                this.attractionForce = 0.10; // Higher attraction
-                this.wanderForce = 0; // Keep jiggling off
+                this.vx = (Math.random() - 0.5) * 12; 
+                this.vy = (Math.random() - 0.5) * 12; 
+                this.friction = 0.85; 
+                this.attractionForce = 0.10; 
+                this.wanderForce = 0; 
             }
             
             update() {
-                // Calculate distances
                 const dx = this.destX - this.x;
                 const dy = this.destY - this.y;
                 
-                // Mouse repulsion
                 const mouseDx = this.x - this.system.mouse.x;
                 const mouseDy = this.y - this.system.mouse.y;
                 const mouseDist = Math.sqrt(mouseDx * mouseDx + mouseDy * mouseDy);
@@ -1660,13 +1757,11 @@
                     this.vy += (mouseDy / mouseDist) * repelForce;
                 }
                 
-                // Subtle wander (disabled by setting wanderForce to 0)
                 if (mouseDist > 100) {
                     this.vx += (Math.random() - 0.5) * this.wanderForce;
                     this.vy += (Math.random() - 0.5) * this.wanderForce;
                 }
                 
-                // Attraction to destination
                 if (mouseDist > 80) {
                     this.vx += dx * this.attractionForce;
                     this.vy += dy * this.attractionForce;
@@ -1675,30 +1770,74 @@
                     this.vy += dy * this.attractionForce * 0.05;
                 }
                 
-                // Apply friction
                 this.vx *= this.friction;
                 this.vy *= this.friction;
                 
-                // Limit max velocity
-                const maxVel = 15; // Balanced max velocity
+                const maxVel = 15; 
                 const vel = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
                 if (vel > maxVel) {
                     this.vx = (this.vx / vel) * maxVel;
                     this.vy = (this.vy / vel) * maxVel;
                 }
                 
-                // Update position
                 this.x += this.vx;
                 this.y += this.vy;
             }
         }
+
+        class Typewriter {
+            constructor(element, texts, options = {}) {
+                this.element = element;
+                this.texts = texts;
+                this.textIndex = 0;
+                this.charIndex = 0;
+                this.isDeleting = false;
+                this.typeSpeed = options.typeSpeed || 120;
+                this.deleteSpeed = options.deleteSpeed || 70;
+                this.delayBetweenTexts = options.delayBetweenTexts || 2000;
+                this.loop = options.loop !== undefined ? options.loop : true;
+                this.timeoutId = null;
+            }
+
+            type() {
+                const currentText = this.texts[this.textIndex];
+                let timeout;
+
+                if (this.isDeleting) {
+                    this.element.textContent = currentText.substring(0, this.charIndex - 1);
+                    this.charIndex--;
+                    timeout = this.deleteSpeed;
+                } else {
+                    this.element.textContent = currentText.substring(0, this.charIndex + 1);
+                    this.charIndex++;
+                    timeout = this.typeSpeed;
+                }
+
+                if (!this.isDeleting && this.charIndex === currentText.length) {
+                    if (!this.loop && this.textIndex === this.texts.length - 1) {
+                        return; 
+                    }
+                    this.isDeleting = true;
+                    timeout = this.delayBetweenTexts;
+                } else if (this.isDeleting && this.charIndex === 0) {
+                    this.isDeleting = false;
+                    this.textIndex = (this.textIndex + 1) % this.texts.length;
+                    timeout = 500;
+                }
+
+                this.timeoutId = setTimeout(() => this.type(), timeout);
+            }
+
+            start() {
+                if (this.timeoutId) clearTimeout(this.timeoutId);
+                this.type();
+            }
+        }
         
-        // Global mouse state
         let mouseX = 0, mouseY = 0;
         let activeSystem = null;
         const particleSystems = [];
         
-        // Mouse tracking
         window.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
@@ -1710,71 +1849,44 @@
         window.addEventListener('DOMContentLoaded', () => {
             const typewriterSpan = document.getElementById('typewriter');
             if (typewriterSpan) {
-                const texts = ["OUR PEOPLE MAKE US EXCEPTIONAL", "EMPOWERING BUSINESSES WORLDWIDE TO DELIVER EXCEPTIONAL OUTCOMES"];
-                let textIndex = 0;
-                let charIndex = 0;
-                let isDeleting = false;
-                const typeSpeed = 120;
-                const deleteSpeed = 70;
-                const delayBetweenTexts = 2000;
-
-                const type = () => {
-                    const currentText = texts[textIndex];
-                    let timeout;
-
-                    if (isDeleting) {
-                        typewriterSpan.textContent = currentText.substring(0, charIndex - 1);
-                        charIndex--;
-                        timeout = deleteSpeed;
-                    } else {
-                        typewriterSpan.textContent = currentText.substring(0, charIndex + 1);
-                        charIndex++;
-                        timeout = typeSpeed;
-                    }
-
-                    if (!isDeleting && charIndex === currentText.length) {
-                        isDeleting = true;
-                        timeout = delayBetweenTexts;
-                    } else if (isDeleting && charIndex === 0) {
-                        isDeleting = false;
-                        textIndex = (textIndex + 1) % texts.length;
-                        timeout = 500;
-                    }
-
-                    setTimeout(type, timeout);
-                }
-                type();
+                const heroTypewriter = new Typewriter(typewriterSpan, ["OUR PEOPLE MAKE US EXCEPTIONAL", "EMPOWERING BUSINESSES WORLDWIDE TO DELIVER EXCEPTIONAL OUTCOMES"]);
+                heroTypewriter.start();
             }
+
             const sections = document.querySelectorAll('.section');
             
             sections.forEach((section, index) => {
                 const h1 = section.querySelector('h1');
                 const canvasId = `canvas${index}`;
+                const canvas = document.getElementById(canvasId);
+
+                if (!canvas) {
+                    console.log(`Canvas with id ${canvasId} not found for section ${index}. Skipping particle system creation.`);
+                    return;
+                }
                 
-                if (canvasId === 'canvas0') { // This is the landing page
-                    const system = new ParticleImage(canvasId, 'abg.webp'); // Use the new class
+                if (h1) {
+                    const text = h1.textContent.trim();
+                    let system;
+                    if (canvasId === 'canvas0') {
+                        system = new ParticleImage(canvasId, 'abg.webp');
+                    } else if (canvasId === 'canvas5') { 
+                        system = new HexagonGrid(canvasId, text);
+                    } else if (canvasId === 'canvas6') { 
+                        system = new SolarSystem(canvasId, text);
+                    } else if (canvasId === 'canvas7') { 
+                        system = new ParticleText(canvasId, text, 150);
+                    } else if (index >= 1 && index <= 4) { // Journey Sections
+                        const h1Element = section.querySelector('h1');
+                        const h1Rect = h1Element.getBoundingClientRect();
+                        const canvasRect = canvas.getBoundingClientRect();
+                        const centerY = (h1Rect.top - canvasRect.top + h1Rect.bottom - canvasRect.top) / 2;
+                        system = new ParticleText(canvasId, text, centerY);
+                    } else {
+                        system = new ParticleText(canvasId, text);
+                    }
                     particleSystems.push(system);
-                    console.log(`Created particle image system for: "abg.webp"`);
-                } else if (canvasId === 'canvas2') {
-                    const text = h1 ? h1.textContent.trim() : '';
-                    const system = new HexagonGrid(canvasId, text);
-                    particleSystems.push(system);
-                    console.log(`Created hexagon grid system for: "${text}"`);
-                } else if (canvasId === 'canvas3') {
-                    const text = h1 ? h1.textContent.trim() : '';
-                    const system = new SolarSystem(canvasId, text);
-                    particleSystems.push(system);
-                    console.log(`Created solar system for: "${text}"`);
-                } else if (canvasId === 'canvas4') {
-                    const text = h1 ? h1.textContent.trim() : '';
-                    const system = new ParticleText(canvasId, text, 150); // Position at top
-                    particleSystems.push(system);
-                    console.log(`Created system for: "${text}"`);
-                } else {
-                    const text = h1 ? h1.textContent.trim() : '';
-                    const system = new ParticleText(canvasId, text); // Default center
-                    particleSystems.push(system);
-                    console.log(`Created system for: "${text}"`);
+                    console.log(`Created particle system for: "${text}"`);
                 }
             });
             
@@ -1783,54 +1895,37 @@
                 activeSystem.setActive(true);
             }
 
-            // New typewriter logic for section3
-            const section3Typewriter = document.getElementById('section3-typewriter');
-            if (section3Typewriter) {
-                const texts = ["WE CELEBRATE DIVERSE PERSPETIVES AND SKILLS"];
-                let textIndex = 0;
-                let charIndex = 0;
-                let isDeleting = false;
-                const typeSpeed = 100;
-                const deleteSpeed = 50;
-                const delayBetweenTexts = 2000;
+            const journeySubheadings = {
+                'section1': ["In 2021, we laid the foundation for our journey, focusing on core values and building a strong team."],
+                'section2': ["2022 was a year of significant growth, expanding our services and reaching new milestones."],
+                'section3': ["By 2023, we solidified our market presence, innovating our offerings and strengthening client relationships."],
+                'section4': ["In 2024, we embraced new technologies, driving efficiency and setting new industry standards."]
+            };
 
-                const typeSection3 = () => {
-                    const currentText = texts[textIndex];
-                    let timeout;
-
-                    if (isDeleting) {
-                        section3Typewriter.textContent = currentText.substring(0, charIndex - 1);
-                        charIndex--;
-                        timeout = deleteSpeed;
-                    } else {
-                        section3Typewriter.textContent = currentText.substring(0, charIndex + 1);
-                        charIndex++;
-                        timeout = typeSpeed;
-                    }
-
-                    if (!isDeleting && charIndex === currentText.length) {
-                        isDeleting = true;
-                        timeout = delayBetweenTexts;
-                    } else if (isDeleting && charIndex === 0) {
-                        isDeleting = false;
-                        textIndex = (textIndex + 1) % texts.length;
-                        timeout = 500;
-                    }
-
-                    setTimeout(typeSection3, timeout);
-                }
-                // Only start if section3 is visible
-                const section3 = document.getElementById('section3');
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            typeSection3();
-                            observer.unobserve(section3); // Only run once
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const sectionId = entry.target.id;
+                        const subheadingElement = entry.target.querySelector('.journey-subheading');
+                        if (subheadingElement && journeySubheadings[sectionId]) {
+                            const typewriter = new Typewriter(subheadingElement, journeySubheadings[sectionId], { loop: false });
+                            typewriter.start();
+                            observer.unobserve(entry.target); 
                         }
-                    });
-                }, { threshold: 0.5 }); // Trigger when 50% of section3 is visible
-                observer.observe(section3);
-            }
+                        
+                        const section3TypewriterEl = document.getElementById('section3-typewriter');
+                        if (sectionId === 'section6' && section3TypewriterEl) {
+                             const typewriter = new Typewriter(section3TypewriterEl, ["WE CELEBRATE DIVERSE PERSPETIVES AND SKILLS"], { loop: true });
+                             typewriter.start();
+                             observer.unobserve(entry.target);
+                        }
+                    }
+                });
+            }, { threshold: 0.6 });
+
+            document.querySelectorAll('#section1, #section2, #section3, #section4, #section6').forEach(section => {
+                observer.observe(section);
+            });
         });
         
         const updateActiveSection = () => {
@@ -1860,21 +1955,149 @@
         
         window.addEventListener('resize', () => {
             particleSystems.forEach(system => {
-                system.resize();
-                if (system instanceof HexagonGrid) {
-                    system.generateHeadingPositions();
-                    system.calculateHexagonLayout();
-                    system.createParticles();
-                } else if (system instanceof ParticleImage) { // Add this block
-                    system.generateImagePositions();
-                    system.createParticles();
-                }
-                else { // For ParticleText
-                    system.generateTextPositions();
-                    system.createParticles();
+                if (system && typeof system.resize === 'function') {
+                    system.resize();
+                     if (system instanceof HexagonGrid) {
+                        system.generateHeadingPositions();
+                        system.calculateHexagonLayout();
+                        system.createParticles();
+                    } else if (system instanceof ParticleImage) {
+                        system.generateImagePositions();
+                        system.createParticles();
+                    } else if (system instanceof ParticleText) {
+                        const sectionId = system.canvas.id.replace('canvas', 'section');
+                        const sectionElement = document.getElementById(sectionId);
+                        if (sectionElement && sectionElement.querySelector('.journey-section-container')) {
+                            const h1Element = sectionElement.querySelector('h1');
+                            const h1Rect = h1Element.getBoundingClientRect();
+                            const canvasRect = system.canvas.getBoundingClientRect();
+                            system.textY = (h1Rect.top - canvasRect.top + h1Rect.bottom - canvasRect.top) / 2;
+                        } else {
+                            system.textY = system.canvas.height / 2; 
+                        }
+                        system.generateTextPositions();
+                        system.createParticles();
+                    }
                 }
             });
         });
+    </script>
+
+    <script type="module">
+    import * as THREE from 'three';
+    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+    // Manages the full-screen explosion effect
+    class FullScreenExplosion {
+        constructor(canvas, textElement, closeButton) {
+            this.canvas = canvas;
+            this.textElement = textElement;
+            this.closeButton = closeButton;
+            this.time = 0;
+            this.isActive = false;
+        }
+
+        init() {
+            this.scene = new THREE.Scene();
+            this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            this.camera.position.z = 100;
+
+            this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true });
+            this.renderer.setPixelRatio(window.devicePixelRatio);
+            this.renderer.setSize(window.innerWidth, window.innerHeight);
+            this.renderer.setClearColor(0x00011d); 
+
+            const renderScene = new RenderPass(this.scene, this.camera);
+            const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+            bloomPass.threshold = 0;
+            bloomPass.strength = 1.2;
+            bloomPass.radius = 0.5;
+
+            this.composer = new EffectComposer(this.renderer);
+            this.composer.addPass(renderScene);
+            this.composer.addPass(bloomPass);
+
+            window.addEventListener('resize', this.onWindowResize.bind(this));
+            this.closeButton.addEventListener('click', this.close.bind(this));
+        }
+
+        createParticleSystem() {
+            const count = 10000;
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(count * 3);
+            const colors = new Float32Array(count * 3);
+            const basePositions = new Float32Array(count * 3);
+            const baseColors = new Float32Array(count * 3);
+
+            for (let i = 0; i < count; i++) {
+                const i3 = i * 3;
+                
+                positions[i3] = 0;
+                positions[i3 + 1] = 0;
+                positions[i3 + 2] = 0;
+
+                const radius = 50 + Math.random() * 100;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+                basePositions[i3] = radius * Math.sin(phi) * Math.cos(theta);
+                basePositions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+                basePositions[i3 + 2] = radius * Math.cos(phi) - 50;
+
+                colors[i3] = baseColors[i3] = 1; 
+                colors[i3 + 1] = baseColors[i3 + 1] = 0; 
+                colors[i3 + 2] = baseColors[i3 + 2] = 0; 
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            
+            const material = new THREE.PointsMaterial({
+                size: 0.3,
+                color: new THREE.Color(0xff0000), 
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+                sizeAttenuation: true,
+            });
+
+            const points = new THREE.Points(geometry, material);
+            points.userData = {
+                velocities: new Float32Array(count * 3),
+                basePositions,
+            };
+            return points;
+        }
+
+        explode() {
+            if (this.isActive) return;
+            this.isActive = true;
+
+            document.getElementById('explosion-container').style.display = 'block';
+            document.querySelector('.button-container').style.display = 'none';
+
+            this.particles = this.createParticleSystem();
+            this.scene.add(this.particles);
+
+            const velocities = this.particles.userData.velocities;
+            for (let i = 0; i < velocities.length / 3; i++) {
+                const i3 = i * 3;
+                const p = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
+                velocities[i3] = p.x * (15 + Math.random() * 15);
+                velocities[i3 + 1] = p.y * (15 + Math.random() * 15);
+                velocities[i3 + 2] = p.z * (15 + Math.random() * 15);
+            }
+
+            this.animate();
+
+            setTimeout(() => {
+                this.textElement.style.display = 'block';
+                this.closeButton.style.display = 'block';
+            }, 2000);
+        }
+
+        close() {
     </script>
 
     <script type="module">

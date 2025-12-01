@@ -3,12 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laptop Revolution</title>
+    <title>Momentum Services</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="shortcut icon" type="image/x-icon" href="fav.svg" />
     <style>
+        @font-face {
+            font-family: 'Digital-7';
+            src: url('digital-7.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
         body {
             margin: 0;
             overflow-x: hidden;
@@ -506,6 +513,28 @@
             animation: animate4 1s linear infinite;
             animation-delay: 0.75s;
         }
+
+        .cursor {
+            color: #f40303;
+            animation: blink 1s step-end infinite;
+            font-size: xx-large;
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+        #typewriter-container {
+            position: absolute;
+            bottom: 0%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            text-align: center;
+        }
+        #typewriter {
+            font-family: 'Digital-7', 'Roboto Mono', monospace;
+            font-size: xx-large;
+            color: #f78a8a;
+        }
     </style>
 </head>
 <body>
@@ -538,7 +567,7 @@
     <div id="content">
         <div class="section visible" id="section0">
             <canvas class="particle-canvas" id="canvas0"></canvas>
-            <p>Empowering Clients using skills and Solutions</p>
+            <h1 id="typewriter-container" class="visible-heading" style="min-height: 15rem;"><span id="typewriter"></span><span class="cursor">|</span></h1>
         </div>
         <div class="section" id="section1">
             <h1>OUR SERVICES</h1>
@@ -1553,6 +1582,43 @@
         });
         
         window.addEventListener('DOMContentLoaded', () => {
+            const typewriterSpan = document.getElementById('typewriter');
+            if (typewriterSpan) {
+                const texts = ["We are Momentum Services", "Empowering Our Clients with skills and Solutions"];
+                let textIndex = 0;
+                let charIndex = 0;
+                let isDeleting = false;
+                const typeSpeed = 120;
+                const deleteSpeed = 70;
+                const delayBetweenTexts = 2000;
+
+                const type = () => {
+                    const currentText = texts[textIndex];
+                    let timeout;
+
+                    if (isDeleting) {
+                        typewriterSpan.textContent = currentText.substring(0, charIndex - 1);
+                        charIndex--;
+                        timeout = deleteSpeed;
+                    } else {
+                        typewriterSpan.textContent = currentText.substring(0, charIndex + 1);
+                        charIndex++;
+                        timeout = typeSpeed;
+                    }
+
+                    if (!isDeleting && charIndex === currentText.length) {
+                        isDeleting = true;
+                        timeout = delayBetweenTexts;
+                    } else if (isDeleting && charIndex === 0) {
+                        isDeleting = false;
+                        textIndex = (textIndex + 1) % texts.length;
+                        timeout = 500;
+                    }
+
+                    setTimeout(type, timeout);
+                }
+                type();
+            }
             const sections = document.querySelectorAll('.section');
             
             sections.forEach((section, index) => {

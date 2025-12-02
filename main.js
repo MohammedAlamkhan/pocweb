@@ -43,7 +43,7 @@ function init() {
     video = document.createElement('video');
     video.src = 'bg.mp4';
     video.muted = true;
-    video.loop = true;
+    // video.loop = true;
     video.playsInline = true;
 
     video.onerror = () => {
@@ -86,6 +86,12 @@ function init() {
             window.addEventListener('scroll', playOnFirstInteraction);
             window.addEventListener('click', playOnFirstInteraction);
         });
+    });
+
+    video.addEventListener('ended', function() {
+        console.log("Video ended, re-loading source and playing again.");
+        this.load();
+        this.play();
     });
 
     // --- Particle System Setup ---

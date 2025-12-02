@@ -711,7 +711,7 @@
                 this.particles = [];
                 this.imagePositions = [];
                 this.mouse = { x: -9999, y: -9999 };
-                this.radius = 2;
+                this.radius = 1;
                 this.active = false;
                 this.initialized = false;
 
@@ -1000,7 +1000,7 @@
             createParticles() {
                 this.headingParticles = [];
                 for (let i = 0; i < this.headingPositions.length; i++) {
-                    this.headingParticles.push(new Particle(this.headingPositions[i].x, this.headingPositions[i].y, 1.5, this));
+                    this.headingParticles.push(new Particle(this.headingPositions[i].x, this.headingPositions[i].y, 1, this));
                 }
 
                 this.hexagonParticles = [];
@@ -1021,7 +1021,7 @@
                             const t = j / (numParticlesPerSide -1);
                             const destX = startX + (endX - startX) * t;
                             const destY = startY + (endY - startY) * t;
-                            this.hexagonParticles.push(new Particle(destX, destY, 1.5, this));
+                            this.hexagonParticles.push(new Particle(destX, destY, 1, this));
                         }
                     }
                 });
@@ -1274,7 +1274,7 @@
                     const radius = Math.random() * sunRadius;
                     const x = centerX + Math.cos(angle) * radius;
                     const y = centerY + Math.sin(angle) * radius;
-                    this.sunAndOrbitParticles.push(new Particle(x, y, 1.5, this));
+                    this.sunAndOrbitParticles.push(new Particle(x, y, 1, this));
                 }
 
                 // Orbit particles
@@ -1290,7 +1290,7 @@
                 
                 // Heading particles
                 this.headingPositions.forEach(pos => {
-                    this.headingParticles.push(new Particle(pos.x, pos.y, 1.5, this));
+                    this.headingParticles.push(new Particle(pos.x, pos.y, 1, this));
                 });
 
                 this.particles = [...this.sunAndOrbitParticles, ...this.headingParticles];
@@ -1422,7 +1422,7 @@
                 this.particles = [];
                 this.textPositions = [];
                 this.mouse = { x: -9999, y: -9999 };
-                this.radius = 2;
+                this.radius = 1;
                 this.active = false;
                 this.initialized = false;
                 

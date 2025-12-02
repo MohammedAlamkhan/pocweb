@@ -115,8 +115,8 @@ function init() {
     particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
     const particleMaterial = new THREE.PointsMaterial({
-        color: 0xff0000,
-        size: 0.05,
+        color: 0x900000,
+        size: 0.02,
         blending: THREE.AdditiveBlending,
         transparent: true,
         depthWrite: false

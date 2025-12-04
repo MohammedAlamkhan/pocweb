@@ -1057,7 +1057,7 @@
 
                 const aspectRatio = this.image.width / this.image.height;
                 let drawWidth, drawHeight;
-                const scaleFactor = 0.8; // New scaling factor
+                const scaleFactor = 0.65; // New scaling factor
 
                 // Calculate dimensions to fit within 75% of the canvas
                 const targetWidth = this.canvas.width * scaleFactor;
@@ -1786,7 +1786,7 @@
                 tempCtx.fillStyle = '#ffffff';
 
                 const centerX = tempCanvas.width / 2;
-                const centerY = this.textY !== null ? this.textY : tempCanvas.height / 3.7;
+                const centerY = this.textY !== null ? this.textY : tempCanvas.height / 3.4;
                 tempCtx.fillText(this.text, centerX, centerY);
 
                 const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);

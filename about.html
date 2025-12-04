@@ -146,60 +146,27 @@
             top: 0;
             left: 0;
             outline: none;
-            z-index: 1;
-        }
-        #scroll-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 500vh;
-            z-index: 2;
+            z-index: -1;
         }
         #content {
-           position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        /* Keep pointer-events: none; for the fixed container */
-        pointer-events: none; 
-        z-index: 3;
+            width: 100%;
+            z-index: 3;
         }
       .section {
-        position: absolute;
+        position: relative;
         width: 100%;
-        height: 100%;
+        height: 100vh;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        
-        /* Transition opacity smoothly, but keep visibility and z-index sharp */
-        transition: opacity 0.1s ease-out; 
-
-        /* 1. Ensure invisible when inactive */
         opacity: 0; 
-        /* 2. Hide from screen reader and layout when inactive */
         visibility: hidden; 
-        /* 3. Give it a base z-index */
-        z-index: 5; 
-        /* Prevent interaction when inactive */
-        pointer-events: none; 
+        transition: opacity 1s ease-out, visibility 1s ease-out;
     }
         .section.visible {
-        /* Full visibility when active */
         opacity: 1; 
-        /* Make visible immediately when active */
         visibility: visible; 
-        /* Bring the active section to the front immediately */
-        z-index: 10; 
-        /* Allow interaction with active section */
-        pointer-events: auto; 
     }
         
         .particle-canvas {
@@ -229,7 +196,6 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 10;
-            /* Ensure the text is always visible when the section is visible */
             opacity: 1; 
         }
 
@@ -261,7 +227,6 @@
                         0 0 200px #f40303;
             -webkit-box-reflect:below 1px linear-gradient(transparent, #0005);
         }
-        /* Removed hue-rotate filters to make both buttons the same color */
         .service-button span {
             position: absolute;
             display: block;
@@ -375,7 +340,6 @@
             color: #fff;
         }
 
-        /* Contact Form Styles */
         .contact-form-container {
             position: relative;
             z-index: 10;
@@ -619,7 +583,56 @@
             height: 150px;
             object-fit: contain;
         }
-    </style>
+    
+        .timeline-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding-top: 80px;
+            position: relative;
+            height: 3500px;
+        }
+
+        .timeline-container svg {
+            width: 260px;
+            height: 3500px;
+            overflow: visible;
+        }
+
+        .timeline-container #path {
+            stroke: #4a4f5c;
+            stroke-width: 6;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .timeline-container .year-label {
+            font-size: 20px;
+            font-weight: bold;
+            fill: #e0e6f0;
+            pointer-events: none;
+        }
+
+        .timeline-container #rocket {
+            width: 50px;
+            transform-origin: center;
+        }
+
+        .timeline-container .milestone {
+            position: absolute;
+            left: 300px;
+            opacity: 0;
+            background: rgba(255,255,255,0.08);
+            padding: 10px 14px;
+            border-radius: 8px;
+            border-left: 3px solid #ff3b3b;
+            max-width: 260px;
+            font-size: 15px;
+            transform: translateY(-10px);
+            transition: opacity .4s ease, transform .4s ease;
+        }
+</style>
 </head>
 <body>
     <nav class="navbar">
@@ -647,7 +660,6 @@
         </div>
     </nav>
     <canvas id="webgl-canvas"></canvas>
-    <div id="scroll-container"></div>
     <div id="content">
         <div class="section visible" id="section0">
             <canvas class="particle-canvas" id="canvas0"></canvas>
@@ -667,6 +679,25 @@
                     <img src="hero-banner2.png" alt="ISO Certified">
                 </div>
             </div>
+        </div>
+        <div class="timeline-container">
+            <svg id="svg" viewBox="0 0 260 3500">
+              <path id="path" d="
+                M130 50
+          
+                C40 250, 220 400, 130 600
+                S220 900, 130 1150
+                S40 1450, 130 1700
+                S220 2000, 130 2300
+                S40 2600, 130 2900
+                S220 3200, 130 3450
+              " />
+        
+              <image id="rocket" href="https://spaces-cdn.clipsafari.com/6uwqffnfoc6zxaxe9kv4pdzvw2h4"
+                     x="105" y="30" width="50" height="50" />
+        
+            </svg>
+            <div id="milestones"></div>
         </div>
         <div class="section" id="section1">
             <h1>OUR SERVICES</h1>
@@ -761,7 +792,7 @@
             }
         }
     </script>
-    <script type="module" src="main.js"></script>
+    <script type="module" src="about-main.js"></script>
     
     <script>
         const menu = document.querySelector('.menu-icon');
@@ -1577,7 +1608,7 @@
             createParticles() {
                 this.particles = [];
                 for (let i = 0; i < this.textPositions.length; i++) {
-                    this.particles.push(new Particle(this.textPositions[i].x, this.textPositions[i].y, this.radius, this));
+                    this.particles.push(new Particle(this.imagePositions[i].x, this.imagePositions[i].y, this.radius, this));
                 }
             }
             
@@ -1833,30 +1864,22 @@
             }
         });
         
-        const updateActiveSection = () => {
+        document.addEventListener('DOMContentLoaded', () => {
             const sections = document.querySelectorAll('.section');
-            let currentIndex = -1;
-            
-            sections.forEach((section, index) => {
-                if (section.classList.contains('visible')) {
-                    currentIndex = index;
-                }
-            });
-            
-            if (currentIndex !== -1 && particleSystems[currentIndex]) {
-                if (activeSystem !== particleSystems[currentIndex]) {
-                    if (activeSystem) {
-                        activeSystem.setActive(false);
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    } else {
+                        entry.target.classList.remove('visible');
                     }
-                    
-                    activeSystem = particleSystems[currentIndex];
-                    activeSystem.setActive(true);
-                    activeSystem.updateMouse(mouseX, mouseY);
-                }
-            }
-        };
-        
-        setInterval(updateActiveSection, 50);
+                });
+            }, { threshold: 0.5 });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
         
         window.addEventListener('resize', () => {
             particleSystems.forEach(system => {
@@ -1998,104 +2021,77 @@
         }
 
         close() {
-            this.isActive = false;
-            document.getElementById('explosion-container').style.display = 'none';
-            this.textElement.style.display = 'none';
-            this.closeButton.style.display = 'none';
-            document.querySelector('.button-container').style.display = 'flex';
-            
-            if (this.particles) {
-                this.scene.remove(this.particles);
-                this.particles.geometry.dispose();
-                this.particles.material.dispose();
-                this.particles = null;
-            }
-        }
-
-        updateParticles() {
-            if (!this.particles) return;
-
-            const positions = this.particles.geometry.attributes.position.array;
-            const velocities = this.particles.userData.velocities;
-            const basePositions = this.particles.userData.basePositions;
-            
-            for (let i = 0; i < positions.length / 3; i++) {
-                const i3 = i * 3;
-                
-                const returnForce = 0.02;
-                velocities[i3] += (basePositions[i3] - positions[i3]) * returnForce;
-                velocities[i3 + 1] += (basePositions[i3 + 1] - positions[i3 + 1]) * returnForce;
-                velocities[i3 + 2] += (basePositions[i3 + 2] - positions[i3 + 2]) * returnForce;
-
-                const damping = 0.96;
-                velocities[i3] *= damping;
-                velocities[i3 + 1] *= damping;
-                velocities[i3 + 2] *= damping;
-
-                positions[i3] += velocities[i3];
-                positions[i3 + 1] += velocities[i3 + 1];
-                positions[i3 + 2] += velocities[i3 + 2];
-            }
-            this.particles.geometry.attributes.position.needsUpdate = true;
-        }
-
-        animate() {
-            if (!this.isActive) return;
-            requestAnimationFrame(this.animate.bind(this));
-            this.time += 0.01;
-            this.updateParticles();
-            this.composer.render();
-        }
-
-        onWindowResize() {
-            this.camera.aspect = window.innerWidth / window.innerHeight;
-            this.camera.updateProjectionMatrix();
-            this.renderer.setSize(window.innerWidth, window.innerHeight);
-            this.composer.setSize(window.innerWidth, window.innerHeight);
-        }
-    }
-
-    // --- Main script ---
-    const explosionCanvas = document.getElementById('explosion-canvas');
-    const explosionText = document.getElementById('explosion-text');
-    const closeExplosionButton = document.getElementById('close-explosion');
-    const explosionManager = new FullScreenExplosion(explosionCanvas, explosionText, closeExplosionButton);
-    
-    explosionManager.init();
-
-    document.getElementById('service-btn-1').addEventListener('click', (e) => {
-        e.preventDefault();
-        explosionManager.explode();
-    });
-    document.getElementById('service-btn-2').addEventListener('click', (e) => {
-        e.preventDefault();
-        explosionManager.explode();
-    });
-
-    document.getElementById('contact-form').addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        const fullName = document.getElementById('fullName').value;
-        const company = document.getElementById('company').value;
-        const email = document.getElementById('email').value;
-        const phone = document.getElementById('phone').value;
-        const message = document.getElementById('message').value;
-
-        const subject = `Contact Form Submission from ${fullName}`;
-        const body = `
-            Full Name: ${fullName}
-            Company/Project: ${company}
-            Email: ${email}
-            Phone: ${phone}
-            
-            Message:
-            ${message}
-        `;
-
-        const mailtoLink = `mailto:abcd@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-        window.location.href = mailtoLink;
-    });
-    </script>
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    gsap.registerPlugin(MotionPathPlugin, ScrollTrigger);
+
+    const svg = document.querySelector("#svg");
+    const path = document.querySelector("#path");
+    const totalLength = path.getTotalLength();
+    const milestonesDiv = document.querySelector("#milestones");
+
+    const timelineData = [
+      { year: 2019, text: "Rocket launched — journey begins." },
+      { year: 2020, text: "First major orbit achieved." },
+      { year: 2021, text: "Docked at milestone station." },
+      { year: 2022, text: "Upgraded engines and systems." },
+      { year: 2023, text: "Entered deep-space region." },
+      { year: 2024, text: "Discovered new opportunities." },
+      { year: 2025, text: "Reached final mission objective." }
+    ];
+
+    const segments = timelineData.length;
+    const progressPoints = timelineData.map((_, i) => i / (segments - 1));
+
+    timelineData.forEach((item, i) => {
+      const t = progressPoints[i];
+      const point = path.getPointAtLength(t * totalLength);
+
+      const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      txt.setAttribute("x", point.x + 35);
+      txt.setAttribute("y", point.y + 5);
+      txt.setAttribute("class", "year-label");
+      txt.textContent = item.year;
+      svg.appendChild(txt);
+
+      const div = document.createElement("div");
+      div.className = "milestone";
+      div.textContent = item.text;
+      div.style.top = point.y + "px";
+      milestonesDiv.appendChild(div);
+
+      ScrollTrigger.create({
+        trigger: div,
+        start: "top center",
+        onEnter: () => {
+          div.style.opacity = 1;
+          div.style.transform = "translateY(0)";
+        },
+        onLeaveBack: () => {
+          div.style.opacity = 0;
+          div.style.transform = "translateY(-10px)";
+        }
+      });
+    });
+
+    gsap.to("#rocket", {
+      scrollTrigger: {
+        trigger: ".timeline-container",
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 1
+      },
+      motionPath: {
+        path: "#path",
+        align: "#path",
+        autoRotate: true,
+        alignOrigin: [0.5, 0.5]
+      }
+    });
+});
+</script>
 </html>

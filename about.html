@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,6 +17,7 @@
             font-weight: normal;
             font-style: normal;
         }
+
         body {
             margin: 0;
             overflow-x: hidden;
@@ -23,6 +25,7 @@
             cursor: auto;
             background-color: #00011d;
         }
+
         /* Navbar Styles */
         .navbar {
             background: #18000000;
@@ -140,6 +143,7 @@
                 cursor: pointer;
             }
         }
+
         #webgl-canvas {
             position: fixed;
             top: 0;
@@ -147,27 +151,30 @@
             outline: none;
             z-index: -1;
         }
+
         #content {
             width: 100%;
             z-index: 3;
         }
-      .section {
-        position: relative;
-        width: 100%;
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        opacity: 0; 
-        visibility: hidden; 
-        transition: opacity 1s ease-out, visibility 1s ease-out;
-    }
+
+        .section {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s ease-out, visibility 1s ease-out;
+        }
+
         .section.visible {
-        opacity: 1; 
-        visibility: visible; 
-    }
-        
+            opacity: 1;
+            visibility: visible;
+        }
+
         .particle-canvas {
             position: absolute;
             top: 0;
@@ -176,7 +183,7 @@
             height: 100%;
             pointer-events: auto;
         }
-        
+
         .section h1 {
             font-size: clamp(2rem, 8vw, 6rem);
             font-weight: 700;
@@ -185,7 +192,7 @@
             position: absolute;
             visibility: hidden;
         }
-        
+
         p {
             font-size: clamp(1rem, 3vw, 1.5rem);
             max-width: 600px;
@@ -195,7 +202,7 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 10;
-            opacity: 1; 
+            opacity: 1;
         }
 
         .cursor {
@@ -203,9 +210,13 @@
             animation: blink 1s step-end infinite;
             font-size: xx-large;
         }
+
         @keyframes blink {
-            50% { opacity: 0; }
+            50% {
+                opacity: 0;
+            }
         }
+
         #typewriter-container {
             position: absolute;
             top: 30%;
@@ -214,33 +225,43 @@
             width: 45%;
             text-align: left;
         }
+
         #typewriter {
             font-family: 'Digital-7', 'Roboto Mono', monospace;
             font-size: xx-large;
             color: #f78a8a;
         }
+
         .typewriter-subheading {
             font-family: 'Digital-7', 'Roboto Mono', monospace;
-            font-size: x-large; /* Slightly smaller than xx-large */
-            color: #f40303; /* A distinct color, or inherit from parent */
+            font-size: x-large;
+            /* Slightly smaller than xx-large */
+            color: #f40303;
+            /* A distinct color, or inherit from parent */
             text-align: center;
-            position: absolute; /* To position it at the bottom */
-            bottom: 10%; /* Adjust as needed */
+            position: absolute;
+            /* To position it at the bottom */
+            bottom: 10%;
+            /* Adjust as needed */
             left: 50%;
             transform: translateX(-50%);
             width: 80%;
             z-index: 10;
         }
+
         .typewriter-subheading::after {
             content: '|';
             color: #f40303;
             animation: blink 1s step-end infinite;
             font-weight: normal;
-            font-size: inherit; /* Inherit from subheading */
+            font-size: inherit;
+            /* Inherit from subheading */
         }
+
         #careers-button {
             position: absolute;
-            bottom: 15%; /* Adjust as needed, below the subheading */
+            bottom: 15%;
+            /* Adjust as needed, below the subheading */
             left: 50%;
             transform: translateX(-50%);
             z-index: 10;
@@ -269,14 +290,16 @@
             animation: flip 4s infinite linear;
         }
 
-        .front, .back {
+        .front,
+        .back {
             position: absolute;
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
         }
 
-        .front img, .back img {
+        .front img,
+        .back img {
             width: 100%;
             height: 100%;
             object-fit: contain;
@@ -290,9 +313,11 @@
             0% {
                 transform: rotateY(0deg);
             }
+
             50% {
                 transform: rotateY(180deg);
             }
+
             100% {
                 transform: rotateY(360deg);
             }
@@ -303,7 +328,8 @@
             height: 150px;
             object-fit: contain;
         }
-        #bg-video {
+
+        #particles-js {
             position: fixed;
             top: 0;
             left: 0;
@@ -314,11 +340,9 @@
         }
     </style>
 </head>
+
 <body>
-    <!-- temp removal -->
-    <!-- <video autoplay loop muted id="bg-video">
-        <source src="bg.mp4" type="video/mp4">
-    </video> -->
+    <div id="particles-js"></div>
     <nav class="navbar">
         <div class="navbar-container">
             <a href="#" class="navbar-logo">
@@ -347,7 +371,8 @@
     <div id="content">
         <div class="section visible" id="section0">
             <canvas class="particle-canvas" id="canvas0"></canvas>
-            <h1 id="typewriter-container" class="visible-heading" style="min-height: 15rem;"><span id="typewriter"></span><span class="cursor">|</span></h1>
+            <h1 id="typewriter-container" class="visible-heading" style="min-height: 15rem;"><span
+                    id="typewriter"></span><span class="cursor">|</span></h1>
             <div class="banner-container">
                 <div class="flipping-banner-container">
                     <div class="flipper">
@@ -365,7 +390,7 @@
             </div>
         </div>
     </div>
-    
+
     <script>
         const menu = document.querySelector('.menu-icon');
         const navMenu = document.querySelector('.nav-menu');
@@ -504,7 +529,7 @@
                 requestAnimationFrame(() => this.animate());
             }
         }
-        
+
         class Particle {
             constructor(destX, destY, radius, system) {
                 this.destX = destX;
@@ -513,43 +538,43 @@
                 this.system = system;
                 this.reset();
             }
-            
+
             reset() {
                 const angle = Math.random() * Math.PI * 2;
                 const distance = Math.max(this.system.canvas.width, this.system.canvas.height) * 0.6;
-                
+
                 this.x = this.system.canvas.width / 2 + Math.cos(angle) * distance;
                 this.y = this.system.canvas.height / 2 + Math.sin(angle) * distance;
-                
+
                 this.vx = (Math.random() - 0.5) * 12; // Balanced initial velocity
                 this.vy = (Math.random() - 0.5) * 12; // Balanced initial velocity
                 this.friction = 0.85; // Higher friction for faster settling
                 this.attractionForce = 0.10; // Higher attraction
                 this.wanderForce = 0; // Keep jiggling off
             }
-            
+
             update() {
                 // Calculate distances
                 const dx = this.destX - this.x;
                 const dy = this.destY - this.y;
-                
+
                 // Mouse repulsion
                 const mouseDx = this.x - this.system.mouse.x;
                 const mouseDy = this.y - this.system.mouse.y;
                 const mouseDist = Math.sqrt(mouseDx * mouseDx + mouseDy * mouseDy);
-                
+
                 if (mouseDist < 150 && mouseDist > 0) {
                     const repelForce = (150 - mouseDist) / 150 * 6;
                     this.vx += (mouseDx / mouseDist) * repelForce;
                     this.vy += (mouseDy / mouseDist) * repelForce;
                 }
-                
+
                 // Subtle wander (disabled by setting wanderForce to 0)
                 if (mouseDist > 100) {
                     this.vx += (Math.random() - 0.5) * this.wanderForce;
                     this.vy += (Math.random() - 0.5) * this.wanderForce;
                 }
-                
+
                 // Attraction to destination
                 if (mouseDist > 80) {
                     this.vx += dx * this.attractionForce;
@@ -558,11 +583,11 @@
                     this.vx += dx * this.attractionForce * 0.05;
                     this.vy += dy * this.attractionForce * 0.05;
                 }
-                
+
                 // Apply friction
                 this.vx *= this.friction;
                 this.vy *= this.friction;
-                
+
                 // Limit max velocity
                 const maxVel = 15; // Balanced max velocity
                 const vel = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
@@ -570,18 +595,18 @@
                     this.vx = (this.vx / vel) * maxVel;
                     this.vy = (this.vy / vel) * maxVel;
                 }
-                
+
                 // Update position
                 this.x += this.vx;
                 this.y += this.vy;
             }
         }
-        
+
         // Global mouse state
         let mouseX = 0, mouseY = 0;
         let activeSystem = null;
         const particleSystems = [];
-        
+
         // Mouse tracking
         window.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
@@ -590,7 +615,7 @@
                 activeSystem.updateMouse(mouseX, mouseY);
             }
         });
-        
+
         window.addEventListener('DOMContentLoaded', () => {
             const typewriterSpan = document.getElementById('typewriter');
             if (typewriterSpan) {
@@ -630,24 +655,24 @@
                 type();
             }
             const sections = document.querySelectorAll('.section');
-            
+
             sections.forEach((section, index) => {
                 const h1 = section.querySelector('h1');
                 const canvasId = `canvas${index}`;
-                
+
                 if (canvasId === 'canvas0') { // This is the landing page
                     const system = new ParticleImage(canvasId, 'abg.webp'); // Use the new class
                     particleSystems.push(system);
                     console.log(`Created particle image system for: "abg.webp"`);
                 }
             });
-            
+
             if (particleSystems.length > 0) {
                 activeSystem = particleSystems[0];
                 activeSystem.setActive(true);
             }
         });
-        
+
         window.addEventListener('resize', () => {
             particleSystems.forEach(system => {
                 system.resize();
@@ -658,5 +683,119 @@
             });
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS('particles-js', {
+            "particles": {
+                "number": {
+                    "value": 150,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": "#f40303"
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#f40303"
+                    },
+                    "polygon": {
+                        "nb_sides": 5
+                    },
+                    "image": {
+                        "src": "img/github.svg",
+                        "width": 100,
+                        "height": 100
+                    }
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": false,
+                    "anim": {
+                        "enable": false,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": false,
+                        "speed": 40,
+                        "size_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#f40303",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 6,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "grab"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 140,
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "bubble": {
+                        "distance": 400,
+                        "size": 40,
+                        "duration": 2,
+                        "opacity": 8,
+                        "speed": 3
+                    },
+                    "repulse": {
+                        "distance": 200,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
+                    }
+                }
+            },
+            "retina_detect": true
+        });
+    </script>
 </body>
+
 </html>

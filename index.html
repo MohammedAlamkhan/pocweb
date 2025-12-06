@@ -12,8 +12,8 @@
     <link rel="shortcut icon" type="image/x-icon" href="fav.svg" />
     <style>
         @font-face {
-            font-family: 'Digital-7';
-            src: url('digital-7.ttf') format('truetype');
+            font-family: 'DMSans-VariableFont_opsz,wght';
+            src: url('DMSans-VariableFont_opsz,wght.ttf') format('truetype');
             font-weight: normal;
             font-style: normal;
         }
@@ -222,7 +222,6 @@
         .section h1 {
             font-size: clamp(2rem, 8vw, 6rem);
             font-weight: 700;
-            text-transform: uppercase;
             margin: 0;
             position: absolute;
             visibility: hidden;
@@ -574,13 +573,13 @@
         }
 
         #typewriter {
-            font-family: 'Digital-7', 'Roboto Mono', monospace;
+            font-family: 'DMSans-VariableFont_opsz,wght', 'Roboto Mono', monospace;
             font-size: xx-large;
             color: #f78a8a;
         }
 
         .typewriter-subheading {
-            font-family: 'Digital-7', 'Roboto Mono', monospace;
+            font-family: 'DMSans-VariableFont_opsz,wght', 'Roboto Mono', monospace;
             font-size: x-large;
             /* Slightly smaller than xx-large */
             color: #f40303;
@@ -618,7 +617,7 @@
 
         /* CSS Variables */
         :root {
-            --electric-border-color: #f40303;
+            --electric-border-color: #00F0FF;
             --electric-light-color: oklch(from var(--electric-border-color) l c h);
             --gradient-color: oklch(from var(--electric-border-color) 0.3 calc(c / 2) h / 0.4);
             --color-neutral-900: oklch(0.185 0 0);
@@ -764,8 +763,8 @@
             margin-top: auto;
 
             color: #f40303;
-            font-family: 'Digital-7';
-            src: url('digital-7.ttf') format('truetype');
+            font-family: 'DMSans-VariableFont_opsz,wght';
+            src: url('DMSans-VariableFont_opsz,wght.ttf') format('truetype');
             font-weight: normal;
             font-style: normal;
             height: 60%;
@@ -1951,7 +1950,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             const typewriterSpan = document.getElementById('typewriter');
             if (typewriterSpan) {
-                const texts = ["We are Momentum Services", "Empowering Our Clients with skills and Solutions"];
+                const texts = ["We are Momentum Services", "Empowering Our Clients with Skills and Solutions"];
                 let textIndex = 0;
                 let charIndex = 0;
                 let isDeleting = false;

@@ -617,7 +617,7 @@
 
         /* CSS Variables */
         :root {
-            --electric-border-color: #00F0FF;
+            --electric-border-color: #00ffff;
             --electric-light-color: oklch(from var(--electric-border-color) l c h);
             --gradient-color: oklch(from var(--electric-border-color) 0.3 calc(c / 2) h / 0.4);
             --color-neutral-900: oklch(0.185 0 0);
@@ -642,17 +642,31 @@
 
         /* Card container */
         .card-container {
-            padding: 2px;
-            border-radius: 24px;
-            position: relative;
-            background: linear-gradient(-30deg,
-                    var(--gradient-color),
-                    transparent,
-                    var(--gradient-color)),
-                linear-gradient(to bottom,
-                    var(--color-neutral-900),
-                    var(--color-neutral-900));
-        }
+    padding: 2px;
+    border-radius: 24px;
+    position: relative;
+
+    /* Glassmorphic background with soft red tint */
+    background: 
+        linear-gradient(
+            -30deg,
+            rgba(255, 80, 80, 0.25),
+            rgba(255, 255, 255, 0.05),
+            rgba(255, 80, 80, 0.25)
+        ),
+        rgba(255, 255, 255, 0.08);
+
+    /* Glass effects */
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+
+    /* Soft glass border */
+    border: 1px solid rgba(255, 255, 255, 0.25);
+
+    /* Optional subtle inner highlight */
+    box-shadow: 0 4px 32px rgba(0, 0, 0, 0.35);
+}
+
 
         /* Inner container */
         .inner-container {
@@ -757,18 +771,73 @@
         }
 
         /* Typography */
-        .title {
-            font-size: 36px;
-            font-weight: 500;
-            margin-top: auto;
+        .card-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
 
-            color: #f40303;
-            font-family: 'DMSans-VariableFont_opsz,wght';
-            src: url('DMSans-VariableFont_opsz,wght.ttf') format('truetype');
-            font-weight: normal;
-            font-style: normal;
+        .card-icon {
+            width: 80%;
             height: 60%;
-            width: 90%;
+            margin-bottom: 20px;
+            object-fit: contain;
+        }
+
+        .card-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #f40303;
+            font-family: 'DMSans-VariableFont_opsz,wght', sans-serif;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        @media screen and (max-width: 960px) {
+            .button-container {
+                flex-direction: column;
+                gap: 30px;
+                position: relative;
+                top: auto;
+                transform: none;
+                margin-top: 20px;
+                margin-bottom: 20px;
+                align-items: center;
+            }
+            .main-container {
+                height: auto; /* Adjust height for smaller screens */
+            }
+            .card-container {
+                width: 80vw;
+                max-width: 350px;
+                height: auto;
+                min-height: 400px;
+            }
+            .card-title {
+                font-size: 1.8rem;
+            }
+            #section1 > h1 {
+                margin-top: 80px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .card-title {
+                font-size: 1.5rem;
+            }
+            .card-icon {
+                width: 80%;
+                height: 60%;
+            }
         }
 
         #particles-js {
@@ -876,8 +945,10 @@
                         <div class="overlay-1"></div>
                         <div class="overlay-2"></div>
                         <div class="background-glow"></div>
-                        <p class="title" style="background-image: url(./how-we-deliver-left.webp);">SKILL AUGMENTATION
-                        </p>
+                        <div class="card-content">
+                            <img src="./how-we-deliver-left.webp" alt="Skill Augmentation" class="card-icon">
+                            <h2 class="card-title">SKILL<br>AUGMENTATION</h2>
+                        </div>
                     </div>
                 </main>
                 <main class="main-container">
@@ -936,8 +1007,10 @@
                         <div class="overlay-2"></div>
                         <div class="background-glow"></div>
 
-                        <p class="title" style="background-image: url(./how-we-deliver-right.webp);">MANAGED SERVICES
-                        </p>
+                        <div class="card-content">
+                            <img src="./how-we-deliver-right.webp" alt="Managed Services" class="card-icon">
+                            <h2 class="card-title">MANAGED<br>SERVICES</h2>
+                        </div>
                     </div>
                 </main>
 
@@ -1024,7 +1097,7 @@
                 this.particles = [];
                 this.imagePositions = [];
                 this.mouse = { x: -9999, y: -9999 };
-                this.radius = 1;
+                this.radius = 1;//particle size
                 this.active = false;
                 this.initialized = false;
 
@@ -2012,7 +2085,7 @@
                     console.log(`Created system for: "${text}"`);
                 } else { // This will apply to canvas1
                     const text = h1 ? h1.textContent.trim() : '';
-                    const system = new ParticleText(canvasId, text); // Default center
+                    const system = new ParticleText(canvasId, text, 150); // Position at top
                     particleSystems.push(system);
                     console.log(`Created system for: "${text}"`);
                 }
@@ -2190,7 +2263,7 @@
                     system.createParticles();
                 }
                 else { // For ParticleText
-                    system.generateTextPositions();
+                    this.generateTextPositions();
                     system.createParticles();
                 }
             });
@@ -2295,7 +2368,7 @@
                 }
             },
             "interactivity": {
-                "detect_on": "canvas",
+                "detect_on": "window",
                 "events": {
                     "onhover": {
                         "enable": true,

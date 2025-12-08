@@ -429,6 +429,49 @@
             height: 300vh; /* Maintain scroll space for animation */
             z-index: 5; /* Ensure proper layering */
         }
+
+        .journey-details {
+            position: absolute;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s, visibility 0.5s;
+            color: #fff;
+            background: rgba(244, 3, 3, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            border: 1px solid #f40303;
+            width: 220px;
+            text-align: center;
+            z-index: 11;
+            backdrop-filter: blur(5px);
+        }
+
+        .container.show-details .journey-details {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Positioning for each detail box */
+        .initial .journey-details { top: 110%; left: 50%; transform: translateX(-50%); }
+        .second .journey-details { top: 110%; left: 50%; transform: translateX(-50%); }
+        .third .journey-details { top: 110%; left: 50%; transform: translateX(-50%); }
+        .fourth .journey-details { bottom: 110%; left: 50%; transform: translateX(-50%); }
+        .fifth .journey-details { bottom: 110%; left: 50%; transform: translateX(-50%); }
+        .sixth .journey-details { bottom: 110%; left: 50%; transform: translateX(-50%); }
+
+        .journey-details h2 {
+            color: #f40303;
+            margin-top: 0;
+            font-family: 'Roboto Mono', monospace;
+        }
+        .journey-details p {
+            font-size: 0.9rem;
+            position: static;
+            transform: none;
+            max-width: none;
+            margin: 0;
+            font-family: 'DMSans-VariableFont_opsz,wght', 'Roboto Mono', monospace;
+        }
     </style>
 </head>
 
@@ -482,25 +525,53 @@
         </div>
     </div>
 
+    <div class="spacer">
+        <h1 class="visible-heading" style="color: #fff; text-align: center;">Our Journey</h1>
+    </div>
+
     <div class="content journney-content">
         <div class="container initial">
             <div class="box"></div>
+            <div class="journey-details">
+                <h2>2019</h2>
+                <p>The journey begins. Momentum Services is founded with a vision to empower businesses.</p>
+            </div>
         </div>
 
         <div class="container second">
             <div class="marker"></div>
+            <div class="journey-details">
+                <h2>2020</h2>
+                <p>Expanding our horizons. We grew our team and service offerings.</p>
+            </div>
         </div>
         <div class="container third">
             <div class="marker"></div>
+            <div class="journey-details">
+                <h2>2021</h2>
+                <p>Achieved ISO certification, a testament to our commitment to quality.</p>
+            </div>
         </div>
         <div class="container fourth">
             <div class="marker"></div>
+            <div class="journey-details">
+                <h2>2022</h2>
+                <p>Recognized as a "Great Place to Work". Our people are our strength.</p>
+            </div>
         </div>
         <div class="container fifth">
             <div class="marker"></div>
+            <div class="journey-details">
+                <h2>2023</h2>
+                <p>Three years in a row as a top workplace. Consistency in excellence.</p>
+            </div>
         </div>
         <div class="container sixth">
             <div class="marker"></div>
+            <div class="journey-details">
+                <h2>2024</h2>
+                <p>Continuing to innovate and lead in the industry, driving success for our clients.</p>
+            </div>
         </div>
     </div>
 
@@ -549,6 +620,23 @@
                         path: points, // array like - [{x:100, y:50}, {x:200, y:0}, {x:300, y:100}]
                         curviness: 1.5 // adjust how curvy the path is, default is 1, 2 is more curvy
                     }
+                });
+
+                const allContainers = gsap.utils.toArray(".container");
+                allContainers.forEach(container => {
+                    ScrollTrigger.create({
+                        trigger: container,
+                        start: "top center",
+                        end: "bottom center",
+                        onEnter: () => {
+                            allContainers.forEach(c => c.classList.remove('show-details'));
+                            container.classList.add('show-details');
+                        },
+                        onEnterBack: () => {
+                            allContainers.forEach(c => c.classList.remove('show-details'));
+                            container.classList.add('show-details');
+                        }
+                    });
                 });
             });
         }

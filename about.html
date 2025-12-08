@@ -472,6 +472,15 @@
             margin: 0;
             font-family: 'DMSans-VariableFont_opsz,wght', 'Roboto Mono', monospace;
         }
+
+        .particle-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: auto;
+        }
     </style>
 </head>
 
@@ -526,7 +535,9 @@
     </div>
 
     <div class="spacer">
-        <h1 class="visible-heading" style="color: #fff; text-align: center;">Our Journey</h1>
+        <h1>OUR JOURNEY</h1>
+            <canvas class="particle-canvas" id="canvas1"></canvas>
+        <!-- <h1 class="visible-heading" style="color: #fff; text-align: center;">Our Journey</h1> -->
     </div>
 
     <div class="content journney-content">
@@ -856,6 +867,147 @@
             }
         }
 
+         class ParticleText {
+            constructor(canvasId, text, textY = null) {
+                this.canvas = document.getElementById(canvasId);
+                if (!this.canvas) {
+                    console.error(`Canvas ${canvasId} not found`);
+                    return;
+                }
+
+                this.ctx = this.canvas.getContext('2d');
+                this.text = text;
+                this.textY = textY;
+                this.particles = [];
+                this.textPositions = [];
+                this.mouse = { x: -9999, y: -9999 };
+                this.radius = 2;
+                this.active = false;
+                this.initialized = false;
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', () => this.init());
+                } else {
+                    this.init();
+                }
+            }
+
+            init() {
+                this.resize();
+                this.generateTextPositions();
+                this.createParticles();
+                this.initialized = true;
+                this.animate();
+
+                if (this.canvas.id === 'canvas0') {
+                    this.setActive(true);
+                }
+            }
+
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+
+            generateTextPositions() {
+                if (document.fonts && !document.fonts.check('700 1rem Roboto Mono')) {
+                    document.fonts.ready.then(() => this.generateTextPositions());
+                    return;
+                }
+
+                const tempCanvas = document.createElement('canvas');
+                const tempCtx = tempCanvas.getContext('2d');
+                tempCanvas.width = this.canvas.width;
+                tempCanvas.height = this.canvas.height;
+
+                const sectionId = this.canvas.id.replace('canvas', 'section');
+                const h1Element = document.querySelector(`#${sectionId} h1`);
+                const computedStyle = getComputedStyle(h1Element);
+                const fontSize = computedStyle.fontSize;
+                const fontFamily = computedStyle.fontFamily;
+
+                tempCtx.font = `700 ${fontSize} ${fontFamily}`;
+                tempCtx.textAlign = 'center';
+                tempCtx.textBaseline = 'middle';
+                tempCtx.fillStyle = '#ffffff';
+
+                const centerX = tempCanvas.width / 2;
+                const centerY = this.textY !== null ? this.textY : tempCanvas.height / 3.4;
+                tempCtx.fillText(this.text, centerX, centerY);
+
+                const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+                const data = imageData.data;
+
+                this.textPositions = [];
+                const step = 4;
+
+                for (let y = 0; y < tempCanvas.height; y += step) {
+                    for (let x = 0; x < tempCanvas.width; x += step) {
+                        const index = (y * tempCanvas.width + x) * 4;
+                        const alpha = data[index + 3];
+
+                        if (alpha > 128) {
+                            this.textPositions.push({ x, y });
+                        }
+                    }
+                }
+
+                console.log(`"${this.text}": ${this.textPositions.length} particles`);
+
+                if (this.textPositions.length === 0) {
+                    console.warn(`No text positions found for "${this.text}", retrying...`);
+                    setTimeout(() => this.generateTextPositions(), 100);
+                }
+            }
+
+            createParticles() {
+                this.particles = [];
+                for (let i = 0; i < this.textPositions.length; i++) {
+                    this.particles.push(new Particle(this.textPositions[i].x, this.textPositions[i].y, this.radius, this));
+                }
+            }
+
+            setActive(active) {
+                if (!this.initialized) return;
+
+                this.active = active;
+                if (active) {
+                    this.particles.forEach(p => p.reset());
+                }
+            }
+
+            updateMouse(x, y) {
+                this.mouse.x = x;
+                this.mouse.y = y;
+            }
+
+            animate() {
+                if (!this.initialized) {
+                    requestAnimationFrame(() => this.animate());
+                    return;
+                }
+
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                if (this.active && this.particles.length > 0) {
+                    // Changed fillStyle to red
+                    this.ctx.fillStyle = '#ff0000';
+
+                    this.ctx.beginPath();
+                    for (let i = 0; i < this.particles.length; i++) {
+                        this.particles[i].update();
+                        const p = this.particles[i];
+                        this.ctx.moveTo(p.x + p.radius, p.y);
+                        this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    }
+                    this.ctx.fill();
+                }
+
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+
+       
         // Global mouse state
         let mouseX = 0, mouseY = 0;
         let activeSystem = null;

@@ -425,7 +425,7 @@
 
         .journney-content {
             position: relative;
-            margin-top: 10vh; 
+            margin-top: 50vh; 
             height: 300vh; /* Maintain scroll space for animation */
             z-index: 5; /* Ensure proper layering */
         }
@@ -471,15 +471,6 @@
             max-width: none;
             margin: 0;
             font-family: 'DMSans-VariableFont_opsz,wght', 'Roboto Mono', monospace;
-        }
-
-        .particle-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: auto;
         }
     </style>
 </head>
@@ -534,10 +525,9 @@
         </div>
     </div>
 
-    <div class="spacer">
+    <div class="section visible" id="section1" style="height: 100vh;">
         <h1>OUR JOURNEY</h1>
-            <canvas class="particle-canvas" id="canvas1"></canvas>
-        <!-- <h1 class="visible-heading" style="color: #fff; text-align: center;">Our Journey</h1> -->
+        <canvas class="particle-canvas" id="canvas1"></canvas>
     </div>
 
     <div class="content journney-content">
@@ -898,10 +888,6 @@
                 this.createParticles();
                 this.initialized = true;
                 this.animate();
-
-                if (this.canvas.id === 'canvas0') {
-                    this.setActive(true);
-                }
             }
 
             resize() {
@@ -1062,28 +1048,48 @@
             }
             const sections = document.querySelectorAll('.section');
 
-            sections.forEach((section, index) => {
+            sections.forEach((section) => {
                 const h1 = section.querySelector('h1');
-                const canvasId = `canvas${index}`;
+                const canvasId = section.querySelector('.particle-canvas')?.id;
 
-                if (canvasId === 'canvas0') { // This is the landing page
-                    const system = new ParticleImage(canvasId, 'abg.webp'); // Use the new class
-                    particleSystems.push(system);
-                    console.log(`Created particle image system for: "abg.webp"`);
+                if (h1 && canvasId) {
+                    const canvas = document.getElementById(canvasId);
+                    if (canvasId === 'canvas0') {
+                        const system = new ParticleImage(canvasId, 'abg.webp');
+                        particleSystems.push(system);
+                    } else if (canvasId === 'canvas1') {
+                        const text = h1.textContent;
+                        const system = new ParticleText(canvasId, text, canvas.parentElement.offsetHeight / 2);
+                        particleSystems.push(system);
+                    }
                 }
             });
 
-            if (particleSystems.length > 0) {
-                activeSystem = particleSystems[0];
-                activeSystem.setActive(true);
-            }
+            // Scroll-based activation
+            particleSystems.forEach((system) => {
+                const triggerId = `#${system.canvas.id.replace('canvas', 'section')}`;
+                if (document.querySelector(triggerId)) {
+                    ScrollTrigger.create({
+                        trigger: triggerId,
+                        start: "top center",
+                        end: "bottom center",
+                        onToggle: self => {
+                            system.setActive(self.isActive);
+                            if(self.isActive) activeSystem = system;
+                        }
+                    });
+                }
+            });
         });
 
         window.addEventListener('resize', () => {
             particleSystems.forEach(system => {
                 system.resize();
-                if (system instanceof ParticleImage) { // Add this block
+                if (system instanceof ParticleImage) {
                     system.generateImagePositions();
+                    system.createParticles();
+                } else if (system instanceof ParticleText) {
+                    system.generateTextPositions();
                     system.createParticles();
                 }
             });

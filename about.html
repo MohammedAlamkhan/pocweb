@@ -425,9 +425,9 @@
 
         .journney-content {
             position: relative;
-            margin-top: 50vh; 
+            margin-top: -50vh; 
             height: 300vh; /* Maintain scroll space for animation */
-            z-index: 5; /* Ensure proper layering */
+            z-index: 15; /* Ensure proper layering */
         }
 
         .journey-details {
@@ -1059,7 +1059,7 @@
                         particleSystems.push(system);
                     } else if (canvasId === 'canvas1') {
                         const text = h1.textContent;
-                        const system = new ParticleText(canvasId, text, canvas.parentElement.offsetHeight / 2);
+                        const system = new ParticleText(canvasId, text, canvas.parentElement.offsetHeight / 4);
                         particleSystems.push(system);
                     }
                 }

@@ -918,7 +918,7 @@
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
                 if (this.active && this.particles.length > 0) {
-                    this.ctx.fillStyle = '#ff0000'; // Particles color
+                    this.ctx.fillStyle = '#E11B12'; // Particles color
                     this.ctx.beginPath();
                     for (let i = 0; i < this.particles.length; i++) {
                         this.particles[i].update();
@@ -1173,7 +1173,7 @@
                     }
 
                     // Draw heading particles
-                    this.ctx.fillStyle = '#ff0000';
+                    this.ctx.fillStyle = '#E11B12';
                     this.ctx.beginPath();
                     this.headingParticles.forEach(p => {
                         this.ctx.moveTo(p.x + p.radius, p.y);
@@ -1239,7 +1239,7 @@
                     }
 
                     // Draw hexagon border particles
-                    this.ctx.fillStyle = '#ff0000';
+                    this.ctx.fillStyle = '#E11B12';
                     this.ctx.beginPath();
                     this.hexagonParticles.forEach(p => {
                         this.ctx.moveTo(p.x + p.radius, p.y);
@@ -1440,7 +1440,7 @@
                     }
 
                     // Draw all particles
-                    this.ctx.fillStyle = '#ff0000';
+                    this.ctx.fillStyle = '#E11B12';
                     this.ctx.beginPath();
                     this.particles.forEach(p => {
                         this.ctx.moveTo(p.x + p.radius, p.y);
@@ -1636,7 +1636,7 @@
                 
                 if (this.active && this.particles.length > 0) {
                     // Changed fillStyle to red
-                    this.ctx.fillStyle = '#ff0000'; 
+                    this.ctx.fillStyle = '#E11B12'; 
                     
                     this.ctx.beginPath();
                     for (let i = 0; i < this.particles.length; i++) {
@@ -1976,7 +1976,7 @@
             
             const material = new THREE.PointsMaterial({
                 size: 0.3,
-                color: new THREE.Color(0xff0000), // Solid red color
+                color: new THREE.Color(0xE11B12), // Solid red color
                 // vertexColors: false, // Default is false, explicitly stating for clarity
                 transparent: true,
                 opacity: 0.8,

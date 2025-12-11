@@ -12,7 +12,7 @@ async function init() {
 
     // Camera
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 6;
+    camera.position.z = 1000;
 
     // Renderer
     renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('webgl-canvas'), antialias: true });
@@ -103,12 +103,16 @@ function animate() {
         mixer.update(delta);
     }
 
-    const rotationAmount = scrollProgress * Math.PI * 4; 
+    const angle = scrollProgress * Math.PI * 20; // Revolves twice
+    const verticalMovement = -scrollProgress * 2; // Move down as we scroll
 
-    if (model) {
-        model.rotation.y = rotationAmount;
-        model.rotation.x = rotationAmount * 0.25;
-    }
+    // Spiraling camera motion
+    camera.position.x = 30 * Math.sin(angle);
+    camera.position.z = 30 * Math.cos(angle);
+    camera.position.y = verticalMovement;
+
+    // Always look at the model's center
+    camera.lookAt(0, -0.5, 0);
 
     renderer.render(scene, camera);
 }

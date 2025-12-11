@@ -1,12 +1,9 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-let scene, camera, renderer, model;
+let scene, camera, renderer, model, mixer;
 let scrollProgress = 0;
 let clock = new THREE.Clock();
-const materials = [];
-const particleMaterials = [];
-let particlesGroup;
 
 async function init() {
     // Scene
@@ -15,7 +12,7 @@ async function init() {
 
     // Camera
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 30;
+    camera.position.z = 6;
 
     // Renderer
     renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('webgl-canvas'), antialias: true });
@@ -29,66 +26,22 @@ async function init() {
     directionalLight.position.set(5, 5, 5);
     scene.add(directionalLight);
 
-    // Load shaders
-    const vertexShader = await fetch('vertex.glsl').then(res => res.text());
-    const fragmentShader = await fetch('fragment.glsl').then(res => res.text());
-    const pointsVertexShader = await fetch('points.vertex.glsl').then(res => res.text());
-    const pointsFragmentShader = await fetch('points.fragment.glsl').then(res => res.text());
-
-    // Particles Group
-    particlesGroup = new THREE.Group();
-    scene.add(particlesGroup);
-
     // Model Loader
     const loader = new GLTFLoader();
     loader.load(
-        './office_laptop.glb',
+        './basemodel.glb',
         (gltf) => {
             model = gltf.scene;
-
-            model.traverse((child) => {
-                if (child.isMesh) {
-                    // Main model material
-                    const originalMaterial = child.material;
-                    const newMaterial = new THREE.ShaderMaterial({
-                        uniforms: {
-                            u_progress: { value: 0 },
-                            u_time: { value: 0 },
-                            u_color: { value: originalMaterial.color || new THREE.Color(0xffffff) },
-                            u_map: { value: originalMaterial.map || null },
-                            u_has_map: { value: !!originalMaterial.map },
-                        },
-                        vertexShader,
-                        fragmentShader,
-                        transparent: true,
-                        side: THREE.DoubleSide,
-                    });
-                    child.material = newMaterial;
-                    materials.push(newMaterial);
-
-                    // Particle system for this mesh
-                    const pointsMaterial = new THREE.ShaderMaterial({
-                        uniforms: {
-                            u_progress: { value: 0 },
-                            u_time: { value: 0 },
-                        },
-                        vertexShader: pointsVertexShader,
-                        fragmentShader: pointsFragmentShader,
-                        transparent: true,
-                        depthWrite: false,
-                    });
-                    const particle = new THREE.Points(child.geometry, pointsMaterial);
-                    particlesGroup.add(particle);
-                    particleMaterials.push(pointsMaterial);
-                }
-            });
-
+            
             scene.add(model);
             model.position.y = -0.5;
             model.scale.set(4.0, 4.0, 4.0);
-            
-            particlesGroup.position.copy(model.position);
-            particlesGroup.scale.copy(model.scale);
+
+            // Animation
+            mixer = new THREE.AnimationMixer(model);
+            gltf.animations.forEach((clip) => {
+                mixer.clipAction(clip).play();
+            });
 
             animate();
         },
@@ -113,36 +66,24 @@ function onScroll() {
     updateSections();
 }
 
-/**
- * Updates the visibility of the content sections based on scroll progress.
- * NOTE: The particle system activation in the HTML script relies on the 'visible' class.
- * By removing the CSS opacity interpolation here, we ensure the entire section 
- * (subheading) appears/disappears sharply, matching the particle system's activation/deactivation.
- */
 function updateSections() {
     const sections = document.querySelectorAll('.section');
     const sectionCount = sections.length;
-    const centerTolerance = 0.5; // How wide the "active" zone is (0.5 means half the section's scroll space)
     let activeSectionIndex = -1;
     
-    // Determine the single active section index
     sections.forEach((section, index) => {
         const sectionStart = index / sectionCount;
         const sectionEnd = (index + 1) / sectionCount;
         
-        // Use a strict check to find the currently active section based on where scrollProgress falls
         if (scrollProgress >= sectionStart && scrollProgress < sectionEnd) {
             activeSectionIndex = index;
         }
     });
 
-    // Toggle visibility based ONLY on the single active section index
     sections.forEach((section, index) => {
         if (index === activeSectionIndex) {
-            // Force the active section to be visible
             section.classList.add('visible');
         } else {
-            // Force all other sections to be inactive
             section.classList.remove('visible');
         }
     });
@@ -157,31 +98,17 @@ function onWindowResize() {
 function animate() {
     requestAnimationFrame(animate);
 
-    const elapsedTime = clock.getElapsedTime();
+    const delta = clock.getDelta();
+    if (mixer) {
+        mixer.update(delta);
+    }
 
-    materials.forEach(material => {
-        material.uniforms.u_progress.value = scrollProgress;
-        material.uniforms.u_time.value = elapsedTime;
-    });
-
-    particleMaterials.forEach(material => {
-        material.uniforms.u_progress.value = scrollProgress;
-        material.uniforms.u_time.value = elapsedTime;
-    });
-
-    // Interactive rotation based on scroll
-    const rotationAmount = scrollProgress * Math.PI * 4; // Two full rotations on Y axis
+    const rotationAmount = scrollProgress * Math.PI * 4; 
 
     if (model) {
         model.rotation.y = rotationAmount;
-        model.rotation.x = rotationAmount * 0.25; // Add some x-axis rotation for more dynamism
+        model.rotation.x = rotationAmount * 0.25;
     }
-    if (particlesGroup) {
-        // Ensure particle group rotation matches the model's
-        particlesGroup.rotation.y = rotationAmount;
-        particlesGroup.rotation.x = rotationAmount * 0.25;
-    }
-
 
     renderer.render(scene, camera);
 }

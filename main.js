@@ -22,34 +22,29 @@ async function init() {
     // Lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(5, 5, 5);
+    const pointLight = new THREE.DirectionalLight(0xffffff);
+pointLight.position.set(5, 5, 5);
     scene.add(directionalLight);
 
     // Model Loader
-    const loader = new GLTFLoader();
-    loader.load(
-        './basemodel.glb',
-        (gltf) => {
-            model = gltf.scene;
-            
-            scene.add(model);
-            model.position.y = -0.5;
-            model.scale.set(4.0, 4.0, 4.0);
+    const image = new THREE.TextureLoader().load('image.png');
 
-            // Animation
-            mixer = new THREE.AnimationMixer(model);
-            gltf.animations.forEach((clip) => {
-                mixer.clipAction(clip).play();
-            });
-
-            animate();
-        },
-        undefined,
-        (error) => {
-            console.error(error);
-        }
-    );
+const loader = new GLTFLoader();
+loader.load(
+  'basemodel.glb',
+  function (gltf) {
+    gltf.scene.traverse(function (child) {
+      if (child.isMesh) {
+        child.material.map = image;
+      }
+    });
+    scene.add(gltf.scene);
+  },
+  undefined,
+  function (error) {
+    console.error(error);
+  }
+);
 
     // Scroll listener
     window.addEventListener('scroll', onScroll);

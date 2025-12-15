@@ -16,11 +16,17 @@ body {
   color: #f8cece;
   font-family: "Poppins", sans-serif;
   font-size: 14px;
-  background-image: url(https://freepngimg.com/thumb/space/8-2-space-png-pic.png);
-  background-size: cover;
-  background-attachment: fixed;
-  background-position: center;
-  background-repeat: no-repeat;
+}
+#background-video {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  min-width: 100%;
+  min-height: 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -101;
 }
 *::-webkit-scrollbar {
   width: 0;
@@ -202,6 +208,9 @@ header .content-fit nav ul {
   </style>
 </head>
 <body>
+  <video autoplay loop muted id="background-video">
+    <source src="https://videos.pexels.com/video-files/1851190/1851190-uhd_2560_1440_25fps.mp4" type="video/mp4">
+  </video>
   <header>
   <div class="content-fit">
     <div class="logo">DDX</div>
@@ -218,8 +227,8 @@ header .content-fit nav ul {
   <div class="content-fit">
     <div class="title" data-before="MOMENTUM SERVICES">MOMENTUM SERVICES</div>
   </div>
-  <img src="https://freepngimg.com/thumb/space/24536-7-space-planet-transparent-image.png" class="decorate" alt="" style="width: 50vw; bottom: 0; right: 0;">
-  <img src="./international-space-station-zero-robotics-earth-observing-system-nasa-iss-5d1320ab9b87b6a1ef3f76dc0aa4dec6.png" class="decorate" alt="" style="width: 40vw; bottom: 0; left: 0;">
+  <!-- <img src="https://freepngimg.com/thumb/space/24536-7-space-planet-transparent-image.png" class="decorate" alt="" style="width: 50vw; bottom: 0; right: 0;">
+  <img src="./international-space-station-zero-robotics-earth-observing-system-nasa-iss-5d1320ab9b87b6a1ef3f76dc0aa4dec6.png" class="decorate" alt="" style="width: 40vw; bottom: 0; left: 0;"> -->
 </div>
 <div class="section" id="intro">
   <div class="content-fit">
@@ -250,7 +259,7 @@ header .content-fit nav ul {
         Corrupti maiores velit consequuntur cupiditate reiciendis similique provident repudiandae.</p>
     </div>
   </div>
-  <img src="./k62npj8j2312umhsl2ok8md2lm.png" class="decorate" alt="" style="width: 70vw; bottom: 0; right: 0;">
+  <!-- <img src="./k62npj8j2312umhsl2ok8md2lm.png" class="decorate" alt="" style="width: 70vw; bottom: 0; right: 0;"> -->
 </div>
 <div class="section" id="contact">
   <div class="content-fit">
@@ -304,14 +313,21 @@ header .content-fit nav ul {
 
     renderer.setSize(window.innerWidth, window.innerHeight);
     container.appendChild(renderer.domElement);
+// Directional light from top-left
+let light = new THREE.DirectionalLight("white", 5);
 
-    let light = new THREE.DirectionalLight("white", 0.8);
-    light.position.set(0, 0, 5);
-    scene.add(light);
-    let ambient = new THREE.AmbientLight("white", 0.5);
-    scene.add(ambient);
+// Set position: x negative (left), y positive (top), z positive (toward camera)
+light.position.set(-5, 5, 5);
 
-    let loader = new GLTFLoader();
+scene.add(light);
+
+// Ambient light for general illumination
+let ambient = new THREE.AmbientLight("white", 1);
+scene.add(ambient);
+
+// GLTF loader
+let loader = new GLTFLoader();
+
     let bee;
     loader.load("basemodel.glb", function (gltf) {
       bee = gltf.scene;
